@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Mobile Specific Meta -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="https://icta.go.ke//assets/img/icons/favicon.png">
+    <!-- Author Meta -->
+    <meta name="author" content="ICTA">
+    <!-- Site Title -->
+    <title>ICT Authority - Over 1 Million Learner Devices Issued, Over 2400 + Jobs Created For The Youth And Over 9,000 Kms + Of Fiber Optics Cable Rolled Out.</title>
+    <!-- Meta Description -->
+    <meta name="description" content="The Information and Communication Technology (ICT) Authority is a State Corporation under the Ministry of Information Communication and Technology.">
+    <!-- Meta Keyword -->
+    <meta name="keywords" content="ICT, Communications">
+    <!-- meta character set -->
+    <meta charset="UTF-8">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://icta.go.ke/" />
+    <meta property="og:title" content="ICT Authority – Digital Transformation Kenya" />
+    <meta property="og:description" content="The National Digital Masterplan 2022-2032 is transforming Kenya into a regional ICT hub." />
+    <meta property="og:image" content="https://icta.go.ke/assets/og-image.jpg" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://icta.go.ke/" />
+    <meta property="twitter:title" content="ICT Authority – Digital Transformation Kenya" />
+    <meta property="twitter:description" content="The National Digital Masterplan 2022-2032 is transforming Kenya into a regional ICT hub." />
+    <meta property="twitter:image" content="https://icta.go.ke/assets/og-image.jpg" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://icta.go.ke/" />
+    <meta name="theme-color" content="#f20d0d" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet" crossorigin="anonymous" />
+    
+    <!-- Critical Theme Script - Runs Immediately -->
+    <script>
+      (function() {
+        try {
+          // Get saved theme or default to system
+          var savedTheme = localStorage.getItem('theme');
+          var theme = savedTheme;
+          
+          if (theme !== 'light' && theme !== 'dark' && theme !== 'system') {
+            theme = 'system';
+          }
+          
+          var appliedTheme;
+          if (theme === 'system') {
+            appliedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          } else {
+            appliedTheme = theme;
+          }
+          
+          // Apply theme class immediately
+          document.documentElement.classList.add(appliedTheme);
+          
+          // Set background color to prevent flash
+          if (appliedTheme === 'dark') {
+            document.documentElement.style.backgroundColor = '#0a0a0a';
+            document.body.style.backgroundColor = '#0a0a0a';
+            document.body.style.color = '#ffffff';
+          } else {
+            document.documentElement.style.backgroundColor = '#f8f5f5';
+            document.body.style.backgroundColor = '#f8f5f5';
+            document.body.style.color = '#1a1a1a';
+          }
+        } catch(e) {
+          // Fallback to light mode
+          document.documentElement.classList.add('light');
+        }
+      })();
+    </script>
+    
+    <style>
+      .skip-to-content {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: #f20d0d;
+        color: white;
+        padding: 8px;
+        z-index: 9999;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .skip-to-content:focus {
+        top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+<!--<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>ICT Authority</title>
+    
+    <-- Primary Meta Tags ->
+    <meta name="title" content="ICT Authority – Digital Transformation Kenya" />
+    <meta name="description" content="The National Digital Masterplan 2022-2032 is transforming Kenya into a regional ICT hub through innovation, infrastructure, and e-government." />
+
+    <-- Open Graph / Facebook ->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://icta.go.ke/" />
+    <meta property="og:title" content="ICT Authority – Digital Transformation Kenya" />
+    <meta property="og:description" content="The National Digital Masterplan 2022-2032 is transforming Kenya into a regional ICT hub." />
+    <meta property="og:image" content="https://icta.go.ke/assets/og-image.jpg" />
+
+    <-- Twitter ->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://icta.go.ke/" />
+    <meta property="twitter:title" content="ICT Authority – Digital Transformation Kenya" />
+    <meta property="twitter:description" content="The National Digital Masterplan 2022-2032 is transforming Kenya into a regional ICT hub." />
+    <meta property="twitter:image" content="https://icta.go.ke/assets/og-image.jpg" />
+
+    <-- Canonical URL ->
+    <link rel="canonical" href="https://icta.go.ke/" />
+    <meta name="theme-color" content="#f20d0d" />
+    
+    <-- Preconnect for performance ->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" crossorigin="anonymous" />
+    
+    <-- Theme script to prevent flash - NO HARDCODED COLORS ->
+    <script>
+      (function() {
+        try {
+          var storedTheme = localStorage.getItem('theme');
+          var theme = storedTheme;
+          if (theme !== 'light' && theme !== 'dark') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.classList.add(theme);
+          // Don't set inline styles - let CSS handle it
+        } catch(e) {}
+      })();
+    </script>
+    
+    <-- Accessibility: skip link ->
+    <style>
+      .skip-to-content {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: #f20d0d;
+        color: white;
+        padding: 8px;
+        z-index: 9999;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .skip-to-content:focus {
+        top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>-->
+
+
+<!--last stable lis version
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>ICT Authority</title>
+    <-- Primary Meta Tags ->
+
+<meta name="title" content="Your App Name – Tagline" />
+<meta name="description" content="A concise description of your app (150–160 chars)." />
+
+<-- Open Graph / Facebook ->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://yourdomain.com/" />
+<meta property="og:title" content="Your App Name – Tagline" />
+<meta property="og:description" content="A concise description of your app." />
+<meta property="og:image" content="https://yourdomain.com/assets/og-image.jpg" />
+
+<-- Twitter ->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content="https://yourdomain.com/" />
+<meta property="twitter:title" content="Your App Name – Tagline" />
+<meta property="twitter:description" content="A concise description of your app." />
+<meta property="twitter:image" content="https://yourdomain.com/assets/og-image.jpg" />
+
+<-- Optional: theme color, canonical URL ->
+<link rel="canonical" href="https://yourdomain.com/" />
+<meta name="theme-color" content="#yourcolor" />
+    <-- Preconnect for performance ->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" crossorigin="anonymous" />
+    
+    <-- Theme script to prevent flash of incorrect theme ->
+    <script>
+      (function() {
+        try {
+          var storedTheme = localStorage.getItem('theme');
+          var theme = storedTheme;
+          if (theme !== 'light' && theme !== 'dark') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.classList.add(theme);
+          if (theme === 'dark') {
+            document.documentElement.style.backgroundColor = '#102219';
+            document.documentElement.style.color = '#ffffff';
+          } else {
+            document.documentElement.style.backgroundColor = '#f6f8f7';
+            document.documentElement.style.color = '#0d1b14';
+          }
+        } catch(e) {}
+      })();
+    </script>
+    
+    <-- Accessibility: skip link ->
+    <style>
+      .skip-to-content {
+        position: absolute;
+        top: -40px;
+        left: 0;
+        background: #11d473;
+        color: #0d1b14;
+        padding: 8px;
+        z-index: 9999;
+        text-decoration: none;
+        font-weight: bold;
+      }
+      .skip-to-content:focus {
+        top: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="#main-content" class="skip-to-content">Skip to main content</a>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>-->

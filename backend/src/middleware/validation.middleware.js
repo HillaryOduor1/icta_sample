@@ -1,0 +1,12 @@
+import { validationResult } from 'express-validator';
+import { ValidationError } from '../shared/errors/ValidationError.js';
+
+export const validate = (validations) => {
+  return async (req, res, next) => {
+    await Promise.all(validations.map(validation => validation.run(req)));
+    const errors = validationResult(req);
+    if (errors.isEmpty()) return next();
+    const formatted = errors.array().map(err => ({ field: err.path, message: err.msg }));
+    throw new ValidationError('Validation failed', formatted);
+  };
+};

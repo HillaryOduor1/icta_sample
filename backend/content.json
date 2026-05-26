@@ -1,0 +1,105 @@
+{
+  "navigation": [
+    {
+      "name": "Home",
+      "href": "/"
+    },
+    {
+      "name": "Features",
+      "href": "/FeaturesSection"
+    },
+    {
+      "name": "Research",
+      "href": "/research"
+    },
+    {
+      "name": "About",
+      "href": "/about"
+    },
+    {
+      "name": "Contact",
+      "href": "/contact"
+    }
+  ],
+  "hero": {
+    "announcementBadge": "New12",
+    "announcementText": "Version 3.0 just launched",
+    "headline": "Build modern websites",
+    "highlightedText": "faster than ever",
+    "subtext": "A fully customizable, production-ready template designed to help you launch SaaS products in record time.",
+    "primaryButtonText": "Get Started",
+    "secondaryButtonText": "View Demo",
+    "features": [
+      "No backend required",
+      "Fully customizable content",
+      "TypeScript + Tailwind ready"
+    ]
+  },
+  "contact": {
+    "sectionTitle": {
+      "text1": "Get",
+      "text2": "In",
+      "text3": "Touch"
+    },
+    "form": {
+      "nameLabel": "Your Name",
+      "namePlaceholder": "Enter your name",
+      "emailLabel": "Your Email",
+      "emailPlaceholder": "Enter your email",
+      "messageLabel": "Your Message",
+      "messagePlaceholder": "Write your message here...",
+      "submitText": "Send Message"
+    }
+  },
+  "cta": {
+    "title": "Ready to get started?",
+    "description": "Join thousands of developers today.",
+    "buttonText": "Start Now"
+  },
+  "features": [
+    {
+      "title": "Lightning-fast setup",
+      "description": "Launch production-ready pages in minutes."
+    },
+    {
+      "title": "Pixel perfect",
+      "description": "Modern Figma-driven UI translated into code."
+    },
+    {
+      "title": "Highly customizable",
+      "description": "Tailwind utility-first classes make customization trivial."
+    }
+  ],
+  "pricing": [
+    {
+      "name": "Basic",
+      "price": 29,
+      "period": "month",
+      "features": [
+        "Basic courses",
+        "Community support"
+      ],
+      "mostPopular": false
+    }
+  ],
+  "testimonials": [
+    {
+      "image": "",
+      "name": "Sophia Carter",
+      "handle": "@sophiacodes",
+      "date": "February 14, 2025",
+      "quote": "This app streamlined our onboarding."
+    }
+  ],
+  "footer": [
+    {
+      "title": "Product",
+      "links": [
+        {
+          "name": "Home",
+          "href": "/"
+        }
+      ]
+    }
+  ]
+}

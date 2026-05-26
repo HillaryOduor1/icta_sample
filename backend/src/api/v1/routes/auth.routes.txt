@@ -1,0 +1,45 @@
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const connectDB = require("../config/db");
+const userSchema = require("../models/User");
+
+const router = express.Router();
+
+router.post("/login", async (req, res) => {
+    const { username, password } = req.body;
+
+    const conn = await connectDB(req.tenant.dbName);
+    const User = conn.model("User", userSchema);
+
+    const user = await User.findOne({ username });
+    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+
+    const token = jwt.sign(
+        { id: user._id, role: user.role, tenant: req.tenant.siteId },
+        process.env.JWT_SECRET,
+        { expiresIn: "1d" }
+    );
+
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+    });
+
+    res.json({ message: "Login successful" });
+});
+
+router.get("/me", async (req, res) => {
+    res.json({ user: req.user });
+});
+
+router.post("/logout", (req, res) => {
+    res.clearCookie("token");
+    res.json({ message: "Logged out" });
+});
+
+module.exports = router;

@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "theme": {
+    "mode": "dark",
+    "primaryColor": "#2563eb",
+    "secondaryColor": "#3b82f6",
+    "backgroundColor": "#ffffff",
+    "textColor": "#0f172a",
+    "borderRadius": "medium",
+    "shadows": true,
+    "animations": true
+  },
+  "typography": {
+    "fontFamily": "system",
+    "fontSize": "normal",
+    "lineHeight": 1.5,
+    "letterSpacing": "normal",
+    "bodyWeight": "normal",
+    "headingWeight": "bold",
+    "headingScale": "normal",
+    "textAlign": "left"
+  },
+  "ui": {
+    "density": "comfortable",
+    "buttonStyle": "filled",
+    "animations": "full"
+  },
+  "data": {
+    "autoSave": true,
+    "saveInterval": 5,
+    "exportFormat": "json",
+    "backupEnabled": true
+  },
+  "notifications": {
+    "enabled": true,
+    "sound": true,
+    "desktopNotifications": false,
+    "frequency": "instant",
+    "emailNotifications": true,
+    "pushNotifications": false,
+    "categories": [
+      "security",
+      "updates"
+    ]
+  },
+  "accessibility": {
+    "reducedMotion": false,
+    "highContrast": false,
+    "focusVisible": true,
+    "textScale": 1,
+    "dyslexiaFriendly": false,
+    "colorVision": "default"
+  },
+  "site": {
+    "title": "Modern CMS",
+    "description": "A powerful admin dashboard."
+  },
+  "lastUpdated": "2026-03-18T20:45:56.319Z"
+}
