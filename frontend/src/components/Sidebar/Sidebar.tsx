@@ -173,12 +173,29 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
         style={{ height: '100dvh' }}
       >
         {/* Header */}
-        <div className="sticky top-0 bg-primary p-4 text-white flex justify-between items-center">
+        {/*<div className="sticky top-0 bg-primary p-4 text-white flex justify-between items-center">
           <a href="https://icta.go.ke/" target="_blank" rel="noopener noreferrer" className="flex items-center">
             <img 
               src="/assets/logo1.png" 
               alt="ICTA logo" 
               className="h-12 w-auto brightness-0 invert"
+            />
+          </a>
+          <button 
+            onClick={handleToggle} 
+            className="p-1 hover:bg-white/20 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Close sidebar"
+          >
+            <X size={24} />
+          </button>
+        </div>*/}
+          
+        <div className="sticky top-0 bg-primary p-4 text-white flex justify-between items-center">
+          <a href="https://icta.go.ke/" target="_blank" rel="noopener noreferrer" className="flex items-center">
+            <img 
+              src="https://icta.go.ke//assets/images/ictalogo.png" 
+              alt="ICTA logo" 
+              className="h-auto w-auto max-h-12 max-w-[150px] brightness-0 invert"
             />
           </a>
           <button 

@@ -1,5 +1,57 @@
 // frontend/src/components/themeToggle.tsx
 import * as React from "react";
+import { useTheme } from "./theme-provider";
+import { Sun, Moon } from "lucide-react";
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
+  // Avoid hydration mismatch
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <button
+        className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors"
+        aria-label="Toggle theme"
+      >
+        <Sun className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+      </button>
+    );
+  }
+
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    
+    // Manually update document class for immediate effect
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  };
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors"
+      aria-label="Toggle theme"
+    >
+      {theme === "dark" ? (
+        <Sun className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+      ) : (
+        <Moon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+      )}
+    </button>
+  );
+}
+/*
+// frontend/src/components/themeToggle.tsx
+import * as React from "react";
 import { Moon, Sun, Monitor } from "lucide-react";
 import { useTheme } from "./theme-provider";
 
@@ -130,7 +182,7 @@ export function ThemeToggle() {
       )}
     </button>
   );
-}
+}*/
 /*// frontend/src/components/themeToggle.tsx
 import * as React from "react";
 import { Moon, Sun, Monitor } from "lucide-react";
