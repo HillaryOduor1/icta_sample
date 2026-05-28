@@ -7,6 +7,70 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
 
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const toggleTheme = React.useCallback(() => {
+    try {
+      const newTheme = theme === "dark" ? "light" : "dark";
+      setTheme(newTheme);
+      
+      // Direct DOM manipulation for immediate feedback
+      const root = window.document.documentElement;
+      if (root) {
+        if (newTheme === "dark") {
+          root.classList.add("dark");
+          root.classList.remove("light");
+        } else {
+          root.classList.add("light");
+          root.classList.remove("dark");
+        }
+      }
+    } catch (e) {
+      console.warn("Theme toggle error:", e);
+    }
+  }, [theme, setTheme]);
+
+  if (!mounted) {
+    // Return a placeholder with no event listeners
+    return (
+      <button
+        className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors"
+        aria-label="Toggle theme"
+        type="button"
+      >
+        <Sun className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+      </button>
+    );
+  }
+
+  return (
+    <button
+      onClick={toggleTheme}
+      className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900/20 transition-colors"
+      aria-label="Toggle theme"
+      type="button"
+    >
+      {theme === "dark" ? (
+        <Sun className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+      ) : (
+        <Moon className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+      )}
+    </button>
+  );
+}
+
+/*works better
+// frontend/src/components/themeToggle.tsx
+import * as React from "react";
+import { useTheme } from "./theme-provider";
+import { Sun, Moon } from "lucide-react";
+
+export function ThemeToggle() {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
+
   // Avoid hydration mismatch
   React.useEffect(() => {
     setMounted(true);
@@ -48,7 +112,9 @@ export function ThemeToggle() {
       )}
     </button>
   );
-}
+}*/
+
+
 /*
 // frontend/src/components/themeToggle.tsx
 import * as React from "react";

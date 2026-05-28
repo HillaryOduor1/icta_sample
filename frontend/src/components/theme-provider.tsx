@@ -21,6 +21,196 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState);
 
+// Safe event listener function
+const safeAddEventListener = (
+  target: any,
+  event: string,
+  handler: () => void
+) => {
+  if (!target) return false;
+  
+  // Check if addEventListener exists and is a function
+  if (target && typeof target.addEventListener === "function") {
+    target.addEventListener(event, handler);
+    return true;
+  }
+  // Fallback for older browsers
+  else if (target && typeof target.attachEvent === "function") {
+    target.attachEvent("on" + event, handler);
+    return true;
+  }
+  return false;
+};
+
+const safeRemoveEventListener = (
+  target: any,
+  event: string,
+  handler: () => void
+) => {
+  if (!target) return;
+  
+  if (target && typeof target.removeEventListener === "function") {
+    target.removeEventListener(event, handler);
+  } else if (target && typeof target.detachEvent === "function") {
+    target.detachEvent("on" + event, handler);
+  }
+};
+
+export function ThemeProvider({
+  children,
+  defaultTheme = "system",
+  storageKey = "vite-ui-theme",
+  ...props
+}: ThemeProviderProps) {
+  const [theme, setTheme] = React.useState<Theme>(() => {
+    // Safe localStorage read
+    try {
+      return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+    } catch (e) {
+      return defaultTheme;
+    }
+  });
+  
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!mounted) return;
+
+    const root = window.document.documentElement;
+    if (!root) return;
+    
+    // Remove old class
+    root.classList.remove("light", "dark");
+    
+    // Apply new theme
+    if (theme === "system") {
+      try {
+        // Safely check system preference
+        let isDark = false;
+        if (window.matchMedia && typeof window.matchMedia === "function") {
+          const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+          if (mediaQuery && typeof mediaQuery.matches !== "undefined") {
+            isDark = mediaQuery.matches;
+          }
+        }
+        root.classList.add(isDark ? "dark" : "light");
+      } catch (e) {
+        // Fallback to light theme on error
+        root.classList.add("light");
+      }
+    } else {
+      root.classList.add(theme);
+    }
+    
+    // Safe localStorage write
+    try {
+      localStorage.setItem(storageKey, theme);
+    } catch (e) {
+      // Ignore storage errors
+    }
+  }, [theme, mounted]);
+
+  // Listen for system theme changes - SAFE VERSION
+  React.useEffect(() => {
+    if (!mounted || theme !== "system") return;
+
+    let mediaQuery: MediaQueryList | null = null;
+    let handler: (() => void) | null = null;
+
+    try {
+      if (window.matchMedia && typeof window.matchMedia === "function") {
+        mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        
+        if (mediaQuery && mediaQuery.addEventListener) {
+          // Modern browsers
+          handler = () => {
+            const root = window.document.documentElement;
+            if (!root) return;
+            const systemTheme = mediaQuery.matches ? "dark" : "light";
+            root.classList.remove("light", "dark");
+            root.classList.add(systemTheme);
+          };
+          mediaQuery.addEventListener("change", handler);
+        } 
+        else if (mediaQuery && mediaQuery.addListener) {
+          // Older browsers (including some iOS versions)
+          handler = () => {
+            const root = window.document.documentElement;
+            if (!root) return;
+            const systemTheme = mediaQuery.matches ? "dark" : "light";
+            root.classList.remove("light", "dark");
+            root.classList.add(systemTheme);
+          };
+          mediaQuery.addListener(handler);
+        }
+      }
+    } catch (e) {
+      console.warn("Could not set up system theme listener:", e);
+    }
+
+    // Cleanup
+    return () => {
+      if (mediaQuery && handler) {
+        if (mediaQuery.removeEventListener) {
+          mediaQuery.removeEventListener("change", handler);
+        } else if (mediaQuery.removeListener) {
+          mediaQuery.removeListener(handler);
+        }
+      }
+    };
+  }, [theme, mounted]);
+
+  const value = {
+    theme,
+    setTheme: (newTheme: Theme) => {
+      setTheme(newTheme);
+    },
+  };
+
+  return (
+    <ThemeProviderContext.Provider value={value} {...props}>
+      {children}
+    </ThemeProviderContext.Provider>
+  );
+}
+
+export const useTheme = () => {
+  const context = React.useContext(ThemeProviderContext);
+  
+  if (context === undefined)
+    throw new Error("useTheme must be used within a ThemeProvider");
+  
+  return context;
+};
+
+/*works better
+// frontend/src/components/theme-provider.tsx
+import * as React from "react";
+
+type Theme = "dark" | "light" | "system";
+
+type ThemeProviderProps = {
+  children: React.ReactNode;
+  defaultTheme?: Theme;
+  storageKey?: string;
+};
+
+type ThemeProviderState = {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+};
+
+const initialState: ThemeProviderState = {
+  theme: "system",
+  setTheme: () => null,
+};
+
+const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState);
+
 export function ThemeProvider({
   children,
   defaultTheme = "system",
@@ -114,7 +304,8 @@ export const useTheme = () => {
     throw new Error("useTheme must be used within a ThemeProvider");
   
   return context;
-};
+};*/
+
 /*
 // frontend/src/components/theme-provider.tsx
 "use client";
