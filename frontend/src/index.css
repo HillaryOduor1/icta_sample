@@ -941,6 +941,61 @@ button:hover,
     }
   }
 }
+/* Consistent hover states - Theme responsive */
+button:hover,
+a:hover,
+.btn-primary:hover,
+.btn-secondary:hover {
+  background-color: rgba(242, 13, 13, 0.1) !important;
+}
+
+/* Remove default gray backgrounds */
+.hover\:bg-green-50:hover {
+  background-color: rgba(242, 13, 13, 0.1) !important;
+}
+
+.dark .hover\:bg-green-900\/20:hover {
+  background-color: rgba(242, 13, 13, 0.2) !important;
+}
+
+/* Focus rings for accessibility */
+*:focus-visible {
+  outline: 2px solid #f20d0d !important;
+  outline-offset: 2px !important;
+  border-radius: 4px !important;
+}
+
+/* Touch targets for mobile */
+button, 
+a, 
+[role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Responsive text sizes */
+@media (max-width: 768px) {
+  h1 { font-size: 1.75rem !important; }
+  h2 { font-size: 1.5rem !important; }
+  h3 { font-size: 1.25rem !important; }
+  p { font-size: 0.875rem !important; }
+}
+/* Add to index.css for better loading experience */
+.skeleton-loader {
+  background: linear-gradient(90deg, #f0eeee 25%, #e0dcdc 50%, #f0eeee 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Dark mode skeleton loader */
+.dark .skeleton-loader {
+  background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+}
 /*
 /* frontend/src/index.css - Force override any inline styles /
 /* IMPORTANT: These styles take precedence /

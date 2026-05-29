@@ -1,4 +1,259 @@
 // frontend/src/components/Footer.tsx
+import React, { useState, useEffect } from 'react';
+import { useContent } from '../content/useContext';
+
+var FacebookIcon = function({ className = "w-5 h-5" }) {
+  return React.createElement("svg", { className: className, viewBox: "0 0 24 24", fill: "currentColor", xmlns: "http://www.w3.org/2000/svg" },
+    React.createElement("path", { d: "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" }));
+};
+
+var TwitterIcon = function({ className = "w-5 h-5" }) {
+  return React.createElement("svg", { className: className, viewBox: "0 0 24 24", fill: "currentColor", xmlns: "http://www.w3.org/2000/svg" },
+    React.createElement("path", { d: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" }));
+};
+
+var LinkedInIcon = function({ className = "w-5 h-5" }) {
+  return React.createElement("svg", { className: className, viewBox: "0 0 24 24", fill: "currentColor", xmlns: "http://www.w3.org/2000/svg" },
+    React.createElement("path", { d: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C0.792 0 0 0.774 0 1.729v20.542C0 23.227 0.792 24 1.771 24h20.451c0.979 0 1.771-0.773 1.771-1.729V1.729C24 0.774 23.205 0 22.222 0h.003z" }));
+};
+
+var MailIcon = function({ className = "w-5 h-5" }) {
+  return React.createElement("svg", { className: className, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", xmlns: "http://www.w3.org/2000/svg" },
+    React.createElement("rect", { x: "2", y: "4", width: "20", height: "16", rx: "2" }),
+    React.createElement("path", { d: "m22 7-10 7L2 7" }));
+};
+
+var ExternalLinkIcon = function({ className = "w-5 h-5" }) {
+  return React.createElement("svg", { className: className, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", xmlns: "http://www.w3.org/2000/svg" },
+    React.createElement("path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" }),
+    React.createElement("polyline", { points: "15 3 21 3 21 9" }),
+    React.createElement("line", { x1: "10", y1: "14", x2: "21", y2: "3" }));
+};
+
+var triggerHaptic = function() {
+  try {
+    if (window.navigator && typeof window.navigator.vibrate === "function") {
+      window.navigator.vibrate(50);
+    }
+  } catch (e) {}
+};
+
+var Footer: React.FC = function() {
+  var { content, isLoading } = useContent();
+  var _useState = useState('');
+  var newsletterEmail = _useState[0];
+  var setNewsletterEmail = _useState[1];
+  var _useState2 = useState<{ type: 'success' | 'error' | ''; message: string }>({ type: '', message: '' });
+  var newsletterStatus = _useState2[0];
+  var setNewsletterStatus = _useState2[1];
+  var _useState3 = useState(false);
+  var loading = _useState3[0];
+  var setLoading = _useState3[1];
+  
+  var footer = content.footer || {};
+  var quickLinks = footer.quickLinks || [];
+  var affiliatedSites = footer.affiliatedSites || [];
+  var resources = footer.resources || [];
+  var ictaLinks = footer.ictaLinks || [];
+  var socialLinks = footer.socialLinks || [];
+
+  var handleNewsletterSubmit = async function(e: React.FormEvent) {
+    e.preventDefault();
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newsletterEmail)) {
+      setNewsletterStatus({ type: 'error', message: 'Please enter a valid email address.' });
+      return;
+    }
+    setLoading(true);
+    setNewsletterStatus({ type: '', message: '' });
+    try {
+      var res = await fetch('https://icta.go.ke/app/newsletter/subscribe.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newsletterEmail })
+      });
+      if (!res.ok) throw new Error('Subscription failed');
+      setNewsletterStatus({ type: 'success', message: 'Thank you for subscribing!' });
+      setNewsletterEmail('');
+    } catch (err: any) {
+      setNewsletterStatus({ type: 'error', message: err.message });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  var getSocialIcon = function(iconName: string) {
+    switch (iconName?.toLowerCase()) {
+      case 'facebook': return React.createElement(FacebookIcon, { className: "w-5 h-5 text-gray-300 group-hover:text-white" });
+      case 'twitter': return React.createElement(TwitterIcon, { className: "w-5 h-5 text-gray-300 group-hover:text-white" });
+      case 'linkedin': return React.createElement(LinkedInIcon, { className: "w-5 h-5 text-gray-300 group-hover:text-white" });
+      case 'mail': return React.createElement(MailIcon, { className: "w-5 h-5 text-gray-300 group-hover:text-white" });
+      default: return null;
+    }
+  };
+
+  if (isLoading) {
+    return React.createElement("footer", { className: "relative pt-12 md:pt-16 pb-24 md:pb-8 overflow-hidden" },
+      React.createElement("div", { className: "max-w-7xl mx-auto px-4" },
+        React.createElement("div", { className: "animate-pulse" },
+          React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-8 mb-8 md:mb-12" },
+            [1, 2, 3, 4, 5].map(function(i) {
+              return React.createElement("div", { key: i },
+                React.createElement("div", { className: "h-6 bg-gray-200 dark:bg-gray-700 rounded w-24 mb-4" }),
+                React.createElement("div", { className: "space-y-2" },
+                  React.createElement("div", { className: "h-4 bg-gray-200 dark:bg-gray-700 rounded w-32" }),
+                  React.createElement("div", { className: "h-4 bg-gray-200 dark:bg-gray-700 rounded w-28" }),
+                  React.createElement("div", { className: "h-4 bg-gray-200 dark:bg-gray-700 rounded w-36" })));
+            })))));
+  }
+
+  return React.createElement("footer", { className: "relative pt-12 md:pt-16 pb-24 md:pb-8 overflow-hidden" },
+    React.createElement("div", {
+      className: "absolute inset-0 z-0 bg-cover bg-center",
+      style: {
+        backgroundImage: "url('/assets/bg_image.jpg')",
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
+      }
+    }),
+    React.createElement("div", { className: "absolute inset-0 z-1 bg-gradient-to-t from-black via-black/90 to-black/80" }),
+    React.createElement("div", { className: "relative z-10 max-w-7xl mx-auto px-4" },
+      React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-8 mb-8 md:mb-12" },
+        React.createElement("div", null,
+          React.createElement("h3", { className: "font-bold text-base md:text-lg text-primary mb-3 md:mb-4" }, "Get In Touch"),
+          React.createElement("p", { className: "text-xs md:text-sm text-gray-300 mb-4" }, "Connect with us online"),
+          React.createElement("div", { className: "flex gap-3" },
+            socialLinks.map(function(link: any, idx: number) {
+              var Icon = getSocialIcon(link.icon);
+              return Icon ? React.createElement("a", {
+                key: idx,
+                href: link.href,
+                target: "_blank",
+                rel: "noopener noreferrer",
+                className: "p-2 rounded-full bg-white/10 hover:bg-primary/30 transition-all hover:scale-110 group focus:outline-none focus:ring-2 focus:ring-primary",
+                "aria-label": link.icon,
+                onClick: triggerHaptic
+              }, Icon) : null;
+            }))),
+        quickLinks.length > 0 && React.createElement("div", null,
+          React.createElement("h3", { className: "font-bold text-base md:text-lg text-primary mb-3 md:mb-4" }, "Quick Links"),
+          React.createElement("ul", { className: "space-y-2" },
+            quickLinks.map(function(link: any, idx: number) {
+              return React.createElement("li", { key: idx },
+                React.createElement("a", {
+                  href: link.href,
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  className: "text-xs md:text-sm text-gray-300 hover:text-primary transition-colors flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary rounded",
+                  onClick: triggerHaptic
+                }, link.name,
+                  React.createElement(ExternalLinkIcon, { size: 12, className: "opacity-50 w-3 h-3" })));
+            }))),
+        affiliatedSites.length > 0 && React.createElement("div", null,
+          React.createElement("h3", { className: "font-bold text-base md:text-lg text-primary mb-3 md:mb-4" }, "Affiliated Sites"),
+          React.createElement("ul", { className: "space-y-2" },
+            affiliatedSites.map(function(site: any, idx: number) {
+              return React.createElement("li", { key: idx },
+                React.createElement("a", {
+                  href: site.href,
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  className: "text-xs md:text-sm text-gray-300 hover:text-primary transition-colors flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary rounded",
+                  onClick: triggerHaptic
+                }, site.name,
+                  React.createElement(ExternalLinkIcon, { size: 12, className: "opacity-50 w-3 h-3" })));
+            }))),
+        React.createElement("div", null,
+          React.createElement("h3", { className: "font-bold text-base md:text-lg text-primary mb-3 md:mb-4" }, "Resources"),
+          React.createElement("ul", { className: "space-y-2 mb-6" },
+            resources.map(function(resource: any, idx: number) {
+              return React.createElement("li", { key: idx },
+                React.createElement("a", {
+                  href: resource.href,
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  className: "text-xs md:text-sm text-gray-300 hover:text-primary transition-colors flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary rounded",
+                  onClick: triggerHaptic
+                }, resource.name,
+                  React.createElement(ExternalLinkIcon, { size: 12, className: "opacity-50 w-3 h-3" })));
+            })),
+          React.createElement("div", null,
+            React.createElement("p", { className: "text-xs text-gray-300 mb-3" }, "To receive regular News, Updates, and Information about ICT Authority."),
+            React.createElement("form", { onSubmit: handleNewsletterSubmit, className: "flex flex-col gap-2" },
+              React.createElement("input", {
+                type: "email",
+                value: newsletterEmail,
+                onChange: function(e) { setNewsletterEmail(e.target.value); },
+                placeholder: "Your Email",
+                className: "bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-primary text-white placeholder:text-gray-400",
+                required: true
+              }),
+              React.createElement("button", {
+                type: "submit",
+                disabled: loading,
+                className: "bg-primary text-white py-2 rounded-lg text-sm font-bold hover:bg-primary/80 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary",
+                onClick: triggerHaptic
+              }, loading ? 'Subscribing...' : 'Subscribe Now'),
+              newsletterStatus.message && React.createElement("p", { className: "text-xs " + (newsletterStatus.type === 'success' ? 'text-green-400' : 'text-red-400') }, newsletterStatus.message)))),
+        ictaLinks.length > 0 && React.createElement("div", null,
+          React.createElement("h3", { className: "font-bold text-base md:text-lg text-primary mb-3 md:mb-4" }, "ICT Authority Links"),
+          React.createElement("ul", { className: "space-y-2" },
+            ictaLinks.map(function(link: any, idx: number) {
+              return React.createElement("li", { key: idx },
+                React.createElement("a", {
+                  href: link.href,
+                  target: "_blank",
+                  rel: "noopener noreferrer",
+                  className: "text-xs md:text-sm text-gray-300 hover:text-primary transition-colors flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-primary rounded",
+                  onClick: triggerHaptic
+                }, link.name,
+                  React.createElement(ExternalLinkIcon, { size: 12, className: "opacity-50 w-3 h-3" })));
+            })))),
+      React.createElement("div", { className: "pt-6 md:pt-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-gray-400 uppercase tracking-widest" },
+        React.createElement("p", null, footer.copyright || `\u00A9 ${new Date().getFullYear()} ICT Authority. All rights reserved.`),
+        React.createElement("div", { className: "flex gap-6" },
+          (footer.legalLinks || []).map(function(link: any, idx: number) {
+            return React.createElement("a", {
+              key: idx,
+              href: link.href,
+              className: "hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded",
+              onClick: triggerHaptic
+            }, link.name);
+          })))),
+    React.createElement("nav", { className: "md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-black/95 backdrop-blur-lg border-t border-primary/20 flex justify-around items-center px-4 py-2" },
+      React.createElement("a", {
+        href: "/",
+        className: "flex flex-col items-center gap-1 text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded p-2",
+        onClick: triggerHaptic
+      }, React.createElement("span", { className: "material-symbols-outlined text-xl" }, "home"),
+        React.createElement("span", { className: "text-[10px] font-medium" }, "Home")),
+      React.createElement("a", {
+        href: "#",
+        className: "flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded p-2",
+        onClick: triggerHaptic
+      }, React.createElement("span", { className: "material-symbols-outlined text-xl" }, "grid_view"),
+        React.createElement("span", { className: "text-[10px] font-medium" }, "Services")),
+      React.createElement("a", {
+        href: "https://icta.go.ke/news",
+        target: "_blank",
+        className: "flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded p-2",
+        onClick: triggerHaptic
+      }, React.createElement("span", { className: "material-symbols-outlined text-xl" }, "newspaper"),
+        React.createElement("span", { className: "text-[10px] font-medium" }, "News")),
+      React.createElement("a", {
+        href: "https://icta.go.ke/contact-us",
+        target: "_blank",
+        className: "flex flex-col items-center gap-1 text-gray-400 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded p-2",
+        onClick: triggerHaptic
+      }, React.createElement("span", { className: "material-symbols-outlined text-xl" }, "mail"),
+        React.createElement("span", { className: "text-[10px] font-medium" }, "Contact"))));
+};
+
+export default Footer;
+
+/*last woring
+// frontend/src/components/Footer.tsx
 import React from 'react';
 import { Mail, ExternalLink } from 'lucide-react';
 import { useContent } from '../content/useContext';
@@ -96,7 +351,7 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="relative pt-16 pb-24 md:pb-8 overflow-hidden">
-      {/* Background Image */}
+      {/* Background Image /}
       <div 
         className="absolute inset-0 z-0 bg-cover bg-center"
         style={{ 
@@ -107,13 +362,13 @@ const Footer: React.FC = () => {
         }}
       />
       
-      {/* Dark Gradient Overlay */}
+      {/* Dark Gradient Overlay /}
       <div className="absolute inset-0 z-1 bg-gradient-to-t from-black via-black/90 to-black/80" />
       
       <div className="relative z-10 max-w-7xl mx-auto px-4">
-        {/* Main Footer Grid */}
+        {/* Main Footer Grid /}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-12">
-          {/* Get In Touch */}
+          {/* Get In Touch /}
           <div>
             <h3 className="font-bold text-lg text-primary mb-4">Get In Touch</h3>
             <p className="text-sm text-gray-300 mb-4">Connect with us online</p>
@@ -136,7 +391,7 @@ const Footer: React.FC = () => {
             </div>
           </div>
           
-          {/* Quick Links */}
+          {/* Quick Links /}
           {quickLinks.length > 0 && (
             <div>
               <h3 className="font-bold text-lg text-primary mb-4">Quick Links</h3>
@@ -153,7 +408,7 @@ const Footer: React.FC = () => {
             </div>
           )}
           
-          {/* Affiliated Sites */}
+          {/* Affiliated Sites /}
           {affiliatedSites.length > 0 && (
             <div>
               <h3 className="font-bold text-lg text-primary mb-4">Affiliated Sites</h3>
@@ -170,7 +425,7 @@ const Footer: React.FC = () => {
             </div>
           )}
           
-          {/* Resources */}
+          {/* Resources /}
           <div>
             <h3 className="font-bold text-lg text-primary mb-4">Resources</h3>
             <ul className="space-y-2 mb-6">
@@ -184,7 +439,7 @@ const Footer: React.FC = () => {
               ))}
             </ul>
             
-            {/* Newsletter Subscription */}
+            {/* Newsletter Subscription /}
             <div>
               <p className="text-xs text-gray-300 mb-3">
                 To receive regular News, Updates, and Information about ICT Authority.
@@ -210,7 +465,7 @@ const Footer: React.FC = () => {
             </div>
           </div>
           
-          {/* ICT Authority Links */}
+          {/* ICT Authority Links /}
           {ictaLinks.length > 0 && (
             <div>
               <h3 className="font-bold text-lg text-primary mb-4">ICT Authority Links</h3>
@@ -228,7 +483,7 @@ const Footer: React.FC = () => {
           )}
         </div>
         
-        {/* Copyright Bar */}
+        {/* Copyright Bar /}
         <div className="pt-8 border-t border-white/20 flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-gray-400 uppercase tracking-widest">
           <p>{footer.copyright || `© ${new Date().getFullYear()} ICT Authority. All rights reserved.`}</p>
           <div className="flex gap-6">
@@ -239,7 +494,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
       
-      {/* Bottom Mobile Nav */}
+      {/* Bottom Mobile Nav /}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-[100] bg-black/95 backdrop-blur-lg border-t border-primary/20 flex justify-around items-center px-4 py-2">
         <a href="/" className="flex flex-col items-center gap-1 text-primary">
           <span className="material-symbols-outlined text-2xl">home</span>
@@ -262,7 +517,9 @@ const Footer: React.FC = () => {
   );
 };
 
-export default Footer;
+export default Footer;*/
+
+
 /*// frontend/src/components/Footer.tsx
 import React from 'react';
 import { Mail, ExternalLink } from 'lucide-react';

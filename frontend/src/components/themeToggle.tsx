@@ -1,6 +1,105 @@
 // frontend/src/components/themeToggle.tsx
 import * as React from "react";
 import { useTheme } from "./theme-provider";
+
+// Haptic feedback function
+var triggerHaptic = function() {
+  try {
+    if (window.navigator && typeof window.navigator.vibrate === "function") {
+      window.navigator.vibrate(50);
+    }
+  } catch (e) {
+    // Silently fail
+  }
+};
+
+export function ThemeToggle() {
+  var themeContext = useTheme();
+  var theme = themeContext.theme;
+  var setTheme = themeContext.setTheme;
+  
+  var _useState = React.useState(false);
+  var mounted = _useState[0];
+  var setMounted = _useState[1];
+
+  React.useEffect(function() {
+    setMounted(true);
+  }, []);
+
+  var toggleTheme = React.useCallback(function() {
+    triggerHaptic();
+    try {
+      var newTheme = theme === "dark" ? "light" : "dark";
+      setTheme(newTheme);
+      
+      var root = window.document.documentElement;
+      if (root) {
+        if (newTheme === "dark") {
+          root.classList.add("dark");
+          root.classList.remove("light");
+        } else {
+          root.classList.add("light");
+          root.classList.remove("dark");
+        }
+      }
+    } catch (e) {
+      console.warn("Theme toggle error:", e);
+    }
+  }, [theme, setTheme]);
+
+  if (!mounted) {
+    return React.createElement("button", {
+      className: "p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary",
+      "aria-label": "Toggle theme",
+      type: "button"
+    });
+  }
+
+  return React.createElement("button", {
+    onClick: toggleTheme,
+    className: "p-2 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary hover:bg-primary/10",
+    "aria-label": "Toggle theme",
+    type: "button"
+  }, theme === "dark" ? (
+    React.createElement("svg", {
+      xmlns: "http://www.w3.org/2000/svg",
+      width: "20",
+      height: "20",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: "2",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      className: "text-gray-700 dark:text-gray-300"
+    }, React.createElement("circle", { cx: "12", cy: "12", r: "5" }),
+      React.createElement("line", { x1: "12", y1: "1", x2: "12", y2: "3" }),
+      React.createElement("line", { x1: "12", y1: "21", x2: "12", y2: "23" }),
+      React.createElement("line", { x1: "4.22", y1: "4.22", x2: "5.64", y2: "5.64" }),
+      React.createElement("line", { x1: "18.36", y1: "18.36", x2: "19.78", y2: "19.78" }),
+      React.createElement("line", { x1: "1", y1: "12", x2: "3", y2: "12" }),
+      React.createElement("line", { x1: "21", y1: "12", x2: "23", y2: "12" }),
+      React.createElement("line", { x1: "4.22", y1: "19.78", x2: "5.64", y2: "18.36" }),
+      React.createElement("line", { x1: "18.36", y1: "5.64", x2: "19.78", y2: "4.22" }))
+  ) : (
+    React.createElement("svg", {
+      xmlns: "http://www.w3.org/2000/svg",
+      width: "20",
+      height: "20",
+      viewBox: "0 0 24 24",
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: "2",
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      className: "text-gray-700 dark:text-gray-300"
+    }, React.createElement("path", { d: "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" }))
+  ));
+}
+/*
+// frontend/src/components/themeToggle.tsx
+import * as React from "react";
+import { useTheme } from "./theme-provider";
 import { Sun, Moon } from "lucide-react";
 
 export function ThemeToggle() {
@@ -59,7 +158,7 @@ export function ThemeToggle() {
       )}
     </button>
   );
-}
+}*/
 
 /*works better
 // frontend/src/components/themeToggle.tsx

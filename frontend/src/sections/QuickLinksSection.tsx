@@ -66,6 +66,7 @@ const QuickLinksSection: React.FC = () => {
 };
 
 export default QuickLinksSection;
+
 /*// frontend/src/sections/QuickLinksSection.tsx
 import React from 'react';
 
