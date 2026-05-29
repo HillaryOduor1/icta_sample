@@ -2,6 +2,100 @@
 import * as React from "react";
 import { useTheme } from "./theme-provider";
 
+type Theme = "light" | "dark";
+
+function triggerHaptic() {
+  try {
+    if (
+      window.navigator &&
+      typeof window.navigator.vibrate === "function"
+    ) {
+      window.navigator.vibrate(50);
+    }
+  } catch (e) {}
+}
+
+export function ThemeToggle() {
+  var themeContext = useTheme();
+
+  var resolvedTheme = themeContext.resolvedTheme;
+  var setTheme = themeContext.setTheme;
+
+  var toggleTheme = React.useCallback(function () {
+    triggerHaptic();
+
+    var nextTheme: Theme =
+      resolvedTheme === "dark"
+        ? "light"
+        : "dark";
+
+    setTheme(nextTheme);
+  }, [resolvedTheme, setTheme]);
+
+  return React.createElement(
+    "button",
+    {
+      onClick: toggleTheme,
+      type: "button",
+      "aria-label": "Toggle theme",
+      className:
+        "p-2 rounded-full bg-transparent hover:bg-transparent focus:outline-none focus:ring-0 border-0 shadow-none"
+    },
+    resolvedTheme === "dark"
+      ? React.createElement(
+          "svg",
+          {
+            xmlns: "http://www.w3.org/2000/svg",
+            width: "20",
+            height: "20",
+            viewBox: "0 0 24 24",
+            fill: "none",
+            stroke: "currentColor",
+            strokeWidth: "2",
+            strokeLinecap: "round",
+            strokeLinejoin: "round"
+          },
+          React.createElement("circle", {
+            cx: "12",
+            cy: "12",
+            r: "5"
+          }),
+          React.createElement("line", {
+            x1: "12",
+            y1: "1",
+            x2: "12",
+            y2: "3"
+          }),
+          React.createElement("line", {
+            x1: "12",
+            y1: "21",
+            x2: "12",
+            y2: "23"
+          })
+        )
+      : React.createElement(
+          "svg",
+          {
+            xmlns: "http://www.w3.org/2000/svg",
+            width: "20",
+            height: "20",
+            viewBox: "0 0 24 24",
+            fill: "none",
+            stroke: "currentColor",
+            strokeWidth: "2",
+            strokeLinecap: "round",
+            strokeLinejoin: "round"
+          },
+          React.createElement("path", {
+            d: "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
+          })
+        )
+  );
+}
+/*// frontend/src/components/themeToggle.tsx
+import * as React from "react";
+import { useTheme } from "./theme-provider";
+
 type Theme = "dark" | "light" | "system";
 
 // Haptic feedback function
@@ -97,7 +191,9 @@ export function ThemeToggle() {
       className: "text-gray-700 dark:text-gray-300"
     }, React.createElement("path", { d: "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" }))
   ));
-}
+}*/
+
+
 /*
 // frontend/src/components/themeToggle.tsx
 import * as React from "react";

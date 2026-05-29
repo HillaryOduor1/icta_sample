@@ -146,6 +146,7 @@ var LoadingFallback = function() {
 };
 
 export default LoadingFallback;
+
 /*// frontend/src/components/LoadingFallback.tsx
 import * as React from "react";
 

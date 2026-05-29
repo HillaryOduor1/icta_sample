@@ -58,7 +58,7 @@ var NewsSection: React.FC = function() {
             : 'text-gray-600 dark:text-gray-400 hover:text-primary hover:bg-primary/10')
         }, "Upcoming Events")),
       activeTab === 'news' && React.createElement(React.Fragment, null,
-        React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8" },
+        React.createElement("div", { className: "grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10" },
           newsItems.map(function(item: any) {
             return React.createElement("div", {
               key: item.id,
@@ -104,6 +104,8 @@ var NewsSection: React.FC = function() {
 };
 
 export default NewsSection;
+
+
 /*lastt working
 // frontend/src/sections/NewsSection.tsx
 import React, { useState } from 'react';

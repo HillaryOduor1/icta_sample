@@ -38,6 +38,253 @@ var getIconComponent = function(iconName: string) {
     React.createElement("line", { x1: "10", y1: "14", x2: "21", y2: "3" }));
 };
 
+var Sidebar = function({ isOpen, toggleSidebar }: SidebarProps) {
+  var { content, isLoading } = useContent();
+  var _useState = useState<{ [key: string]: boolean }>({});
+  var openDropdowns = _useState[0];
+  var setOpenDropdowns = _useState[1];
+  var sidebarRef = useRef<HTMLDivElement>(null);
+  var scrollYRef = useRef<number>(0);
+
+  var topNavLinks = content.topNavLinks || [];
+  var mainNavItems = content.mainNavItems || [];
+
+  var sidebarNavItems = mainNavItems.map(function(item: any) {
+    return Object.assign({}, item, {
+      icon: getIconComponent(item.label?.toLowerCase().replace(/\s/g, ''))
+    });
+  });
+
+  var toggleDropdown = function(name: string) {
+    triggerHaptic();
+    setOpenDropdowns(function(prev) {
+      var newState = Object.assign({}, prev);
+      newState[name] = !prev[name];
+      return newState;
+    });
+  };
+
+  var handleToggle = function() {
+    triggerHaptic();
+    toggleSidebar();
+  };
+
+  // Prevent body scroll when sidebar is open
+  useEffect(function() {
+    if (isOpen) {
+      // Save current scroll position
+      scrollYRef.current = window.scrollY;
+      
+      // Apply styles to prevent scrolling
+      document.body.style.position = 'fixed';
+      document.body.style.top = '-' + scrollYRef.current + 'px';
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      // Restore scrolling
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      
+      // Restore scroll position
+      window.scrollTo(0, scrollYRef.current);
+    }
+    
+    return function() {
+      // Cleanup: ensure scrolling is restored if component unmounts while open
+      if (isOpen) {
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      }
+    };
+  }, [isOpen]);
+
+  // Close on outside click
+  useEffect(function() {
+    var handleClickOutside = function(event: MouseEvent) {
+      if (isOpen && sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        handleToggle();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return function() { document.removeEventListener("mousedown", handleClickOutside); };
+  }, [isOpen]);
+
+  // Close on Escape key
+  useEffect(function() {
+    var handleKeyDown = function(event: KeyboardEvent) {
+      if (isOpen && event.key === 'Escape') {
+        handleToggle();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return function() { document.removeEventListener('keydown', handleKeyDown); };
+  }, [isOpen]);
+
+  // Swipe to close on touch devices
+  useEffect(function() {
+    var touchStartX = 0;
+    var onTouchStart = function(e: TouchEvent) { 
+      touchStartX = e.changedTouches[0].clientX; 
+    };
+    var onTouchMove = function(e: TouchEvent) {
+      if (!isOpen) return;
+      var deltaX = e.changedTouches[0].clientX - touchStartX;
+      if (deltaX < -50) {
+        handleToggle();
+      }
+    };
+    window.addEventListener('touchstart', onTouchStart);
+    window.addEventListener('touchmove', onTouchMove);
+    return function() {
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+    };
+  }, [isOpen]);
+
+  if (isLoading) {
+    return React.createElement(React.Fragment, null,
+      isOpen && React.createElement("div", { className: "fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden" }),
+      React.createElement("aside", { 
+        className: "fixed top-0 left-0 h-full w-80 z-50 shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col bg-white dark:bg-surface border-r border-gray-200 dark:border-gray-800 " + (isOpen ? 'translate-x-0' : '-translate-x-full'),
+        style: { height: '100%' }
+      },
+        React.createElement("div", { className: "sticky top-0 bg-primary p-4" },
+          React.createElement("div", { className: "h-12 w-32 bg-white/20 rounded animate-pulse" })),
+        React.createElement("div", { className: "flex-1 p-4 space-y-6" },
+          React.createElement("div", { className: "space-y-2" },
+            [1, 2, 3, 4, 5].map(function(i) {
+              return React.createElement("div", { key: i, className: "h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" });
+            })))));
+  }
+
+  return React.createElement(React.Fragment, null,
+    // Overlay - only shown on mobile when sidebar is open
+    isOpen && React.createElement("div", {
+      className: "fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden",
+      onClick: handleToggle,
+      "aria-hidden": "true"
+    }),
+    React.createElement("aside", {
+      ref: sidebarRef,
+      role: "dialog",
+      "aria-modal": "true",
+      "aria-label": "Mobile navigation menu",
+      className: "fixed top-0 left-0 h-full w-80 z-50 shadow-xl transform transition-transform duration-300 ease-in-out overflow-y-auto flex flex-col bg-white dark:bg-surface border-r border-gray-200 dark:border-gray-700 " + (isOpen ? 'translate-x-0' : '-translate-x-full'),
+      style: { height: '100%' }
+    },
+    React.createElement("div", { className: "sticky top-0 bg-primary p-4 text-white flex justify-between items-center" },
+      React.createElement("a", { href: "https://icta.go.ke/", target: "_blank", rel: "noopener noreferrer", className: "flex items-center" },
+        React.createElement("img", {
+          src: "https://icta.go.ke//assets/images/ictalogo.png",
+          alt: "ICTA logo",
+          className: "h-auto w-auto max-h-12 max-w-[150px] brightness-0 invert"
+        })),
+      React.createElement("button", {
+        onClick: handleToggle,
+        className: "p-1 hover:bg-white/20 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white",
+        "aria-label": "Close sidebar"
+      }, React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+        React.createElement("line", { x1: "18", y1: "6", x2: "6", y2: "18" }),
+        React.createElement("line", { x1: "6", y1: "6", x2: "18", y2: "18" })))),
+    React.createElement("div", { className: "flex-1 p-4 space-y-6 overflow-y-auto" },
+      topNavLinks.length > 0 && React.createElement("div", null,
+        React.createElement("h3", { className: "text-xs font-semibold text-primary uppercase tracking-wider mb-3 px-2" }, "Quick Links"),
+        React.createElement("div", { className: "space-y-1" },
+          topNavLinks.map(function(link: any, idx: number) {
+            return React.createElement(SidebarItem, {
+              key: link.label || idx,
+              icon: React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+                React.createElement("path", { d: "M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" }),
+                React.createElement("polyline", { points: "22,6 12,13 2,6" })),
+              label: link.label,
+              href: link.href,
+              external: true,
+              onClick: handleToggle
+            });
+          }))),
+      React.createElement("div", { className: "border-t border-gray-200 dark:border-gray-700" }),
+      sidebarNavItems.length > 0 && React.createElement("div", null,
+        React.createElement("h3", { className: "text-xs font-semibold text-primary uppercase tracking-wider mb-3 px-2" }, "Navigation"),
+        React.createElement("div", { className: "space-y-1" },
+          sidebarNavItems.map(function(item: any) {
+            if (item.dropdown && item.dropdown.length > 0) {
+              return React.createElement(SidebarDropdown, {
+                key: item.label,
+                name: item.label.toLowerCase().replace(/\s/g, '-'),
+                label: item.label,
+                icon: item.icon,
+                items: item.dropdown,
+                isOpen: openDropdowns[item.label] || false,
+                onToggle: function() { toggleDropdown(item.label); },
+                onItemClick: handleToggle
+              });
+            }
+            return React.createElement(SidebarItem, {
+              key: item.label,
+              icon: item.icon,
+              label: item.label,
+              href: item.href,
+              external: item.external,
+              onClick: handleToggle
+            });
+          })))),
+    React.createElement(SidebarFooter, null)));
+};
+
+export default Sidebar;
+/*// frontend/src/components/Sidebar/Sidebar.tsx
+import React, { useState, useRef, useEffect } from 'react';
+import SidebarItem from './SidebarItem';
+import SidebarDropdown from './SidebarDropdown';
+import SidebarFooter from './SidebarFooter';
+import { useContent } from '../../content/useContext';
+
+interface SidebarProps {
+  isOpen: boolean;
+  toggleSidebar: () => void;
+}
+
+// Haptic feedback function
+var triggerHaptic = function() {
+  try {
+    if (window.navigator && typeof window.navigator.vibrate === "function") {
+      window.navigator.vibrate(50);
+    }
+  } catch (e) {}
+};
+
+// Helper to get icon component by name - using simple SVGs for ES5 compatibility
+var getIconComponent = function(iconName: string) {
+  var icons: Record<string, React.ReactNode> = {
+    home: React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      React.createElement("path", { d: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-7H9v7H5a2 2 0 0 1-2-2z" })),
+    info: React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      React.createElement("circle", { cx: "12", cy: "12", r: "10" }),
+      React.createElement("line", { x1: "12", y1: "16", x2: "12", y2: "12" }),
+      React.createElement("line", { x1: "12", y1: "8", x2: "12.01", y2: "8" })),
+    briefcase: React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+      React.createElement("rect", { x: "2", y: "7", width: "20", height: "14", rx: "2", ry: "2" }),
+      React.createElement("path", { d: "M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" }))
+  };
+  return icons[iconName?.toLowerCase()] || React.createElement("svg", { xmlns: "http://www.w3.org/2000/svg", width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" },
+    React.createElement("path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" }),
+    React.createElement("polyline", { points: "15 3 21 3 21 9" }),
+    React.createElement("line", { x1: "10", y1: "14", x2: "21", y2: "3" }));
+};
+
 var Sidebar: React.FC<SidebarProps> = function({ isOpen, toggleSidebar }) {
   var { content, isLoading } = useContent();
   var _useState = useState<{ [key: string]: boolean }>({});
@@ -195,7 +442,8 @@ var Sidebar: React.FC<SidebarProps> = function({ isOpen, toggleSidebar }) {
     React.createElement(SidebarFooter, null)));
 };
 
-export default Sidebar;
+export default Sidebar;*/
+
 /*
 // frontend/src/components/Sidebar/Sidebar.tsx
 import React, { useState, useRef, useEffect } from 'react';

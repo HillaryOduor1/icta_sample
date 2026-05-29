@@ -1,4 +1,127 @@
 // frontend/src/components/theme-provider.tsx
+
+import * as React from "react";
+
+export type Theme = "light" | "dark" | "system";
+export type ResolvedTheme = "light" | "dark";
+
+type ThemeProviderProps = {
+  children: React.ReactNode;
+  defaultTheme?: Theme;
+  storageKey?: string;
+};
+
+type ThemeProviderState = {
+  theme: Theme;
+  resolvedTheme: ResolvedTheme;
+  setTheme: (theme: Theme) => void;
+};
+
+const initialState: ThemeProviderState = {
+  theme: "system",
+  resolvedTheme: "light",
+  setTheme: () => {}
+};
+
+const ThemeContext = React.createContext<ThemeProviderState>(initialState);
+
+function getSystemTheme(): ResolvedTheme {
+  if (typeof window === "undefined") return "light";
+
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
+function resolveTheme(theme: Theme): ResolvedTheme {
+  return theme === "system" ? getSystemTheme() : theme;
+}
+
+function applyTheme(resolved: ResolvedTheme) {
+  if (typeof document === "undefined") return;
+
+  const root = document.documentElement;
+
+  root.classList.remove("light", "dark");
+  root.classList.add(resolved);
+}
+
+export function ThemeProvider({
+  children,
+  defaultTheme = "system",
+  storageKey = "vite-ui-theme"
+}: ThemeProviderProps) {
+  const getInitialTheme = (): Theme => {
+    if (typeof window === "undefined") return defaultTheme;
+
+    try {
+      const stored = localStorage.getItem(storageKey) as Theme | null;
+
+      if (stored === "light" || stored === "dark" || stored === "system") {
+        return stored;
+      }
+    } catch {}
+
+    return defaultTheme;
+  };
+
+  const [theme, setThemeState] = React.useState<Theme>(getInitialTheme);
+  const [resolvedTheme, setResolvedTheme] = React.useState<ResolvedTheme>(
+    resolveTheme(getInitialTheme())
+  );
+
+  // Sync theme → resolvedTheme + DOM
+  React.useEffect(() => {
+    const resolved = resolveTheme(theme);
+
+    setResolvedTheme(resolved);
+    applyTheme(resolved);
+
+    try {
+      localStorage.setItem(storageKey, theme);
+    } catch {}
+  }, [theme, storageKey]);
+
+  // Listen for system theme changes
+  React.useEffect(() => {
+    if (theme !== "system") return;
+
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const handler = () => {
+      const resolved = media.matches ? "dark" : "light";
+
+      setResolvedTheme(resolved);
+      applyTheme(resolved);
+    };
+
+    media.addEventListener?.("change", handler);
+    media.addListener?.(handler);
+
+    return () => {
+      media.removeEventListener?.("change", handler);
+      media.removeListener?.(handler);
+    };
+  }, [theme]);
+
+  const value: ThemeProviderState = {
+    theme,
+    resolvedTheme,
+    setTheme: setThemeState
+  };
+
+  return (
+    <ThemeContext.Provider value={value}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export function useTheme() {
+  return React.useContext(ThemeContext);
+}
+/*
+// frontend/src/components/theme-provider.tsx
 import * as React from "react";
 
 type Theme = "dark" | "light" | "system";
@@ -170,7 +293,9 @@ export var useTheme = function() {
   }
   
   return context;
-};
+};*/
+
+
 /*// frontend/src/components/theme-provider.tsx
 import * as React from "react";
 

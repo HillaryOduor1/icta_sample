@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ThemeToggle } from './themeToggle';
 import { useContent } from '../content/useContext';
+import { useTheme } from './theme-provider';
 
 var triggerHaptic = function() {
   try {
@@ -21,6 +22,14 @@ var Navbar = function(props: any) {
   var [moreItems, setMoreItems] = useState<any[]>([]);
   var navRef = useRef<any>(null);
   var rightSectionRef = useRef<any>(null);
+
+  var themeContext = useTheme();
+  var resolvedTheme = themeContext.resolvedTheme;
+  var logoSrc =
+      resolvedTheme === 'dark'
+      ? '/assets/ictaLogo_dark.png'
+      : 'https://icta.go.ke//assets/images/ictalogo.png';
+        
 
   var topNavLinks = (content.topNavLinks || []);
   var mainNavItems = (content.mainNavItems || []);
@@ -316,10 +325,11 @@ var Navbar = function(props: any) {
       React.createElement(
         'div',
         { className: 'flex flex-wrap items-center justify-between gap-4' },
-        // Mobile: Hamburger on left, Logo on right
+        
+        // HAMBURGER MENU - Mobile only, far left
         React.createElement(
           'div',
-          { className: 'flex lg:hidden items-center gap-2 order-1' },
+          { className: 'flex lg:hidden items-center order-1' },
           React.createElement(
             'button',
             {
@@ -327,15 +337,16 @@ var Navbar = function(props: any) {
                 triggerHaptic(); 
                 setIsSidebarOpen(!isSidebarOpen); 
               },
-              className: 'p-2 rounded-lg hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary bg-transparent'
+              className: 'p-2 rounded-lg bg-transparent hover:bg-transparent focus:outline-none focus:ring-0 border-0 shadow-none',
+              'aria-label': isSidebarOpen ? 'Close menu' : 'Open menu'
             },
             isSidebarOpen ? 
               React.createElement(
                 'svg',
                 {
                   xmlns: 'http://www.w3.org/2000/svg',
-                  width: '22',
-                  height: '22',
+                  width: '24',
+                  height: '24',
                   viewBox: '0 0 24 24',
                   fill: 'none',
                   stroke: 'currentColor',
@@ -350,8 +361,8 @@ var Navbar = function(props: any) {
                 'svg',
                 {
                   xmlns: 'http://www.w3.org/2000/svg',
-                  width: '22',
-                  height: '22',
+                  width: '24',
+                  height: '24',
                   viewBox: '0 0 24 24',
                   fill: 'none',
                   stroke: 'currentColor',
@@ -365,37 +376,50 @@ var Navbar = function(props: any) {
               )
           )
         ),
-        // Logo - on mobile goes to right, on desktop stays left
+        
+        // SPACER - Only visible on mobile, pushes logo to the right
+        React.createElement('div', { className: 'flex-1 lg:hidden order-2' }),
+        
+        // LOGO - Mobile: far right (order-3), Desktop: far left (lg:order-1)
         React.createElement(
-          'div',
-          { className: 'flex-shrink-0 lg:order-1 order-2', style: { width: '20%' } },
+          'div', 
+          { 
+            className: 'flex-shrink-0 order-3 lg:order-1',
+            style: { width: '20%', minWidth: '100px' }
+          },
           React.createElement(
             'a',
             {
               href: 'https://icta.go.ke/',
               target: '_blank',
               rel: 'noopener noreferrer',
-              className: 'flex items-center w-full focus:outline-none focus:ring-2 focus:ring-primary rounded'
+              className: 'flex items-center justify-end lg:justify-start focus:outline-none focus:ring-2 focus:ring-primary rounded'
             },
             React.createElement('img', {
-              src: 'https://icta.go.ke//assets/images/ictalogo.png',
+              //src: '/assets/logo1.png',
+              src: logoSrc,
+              key: resolvedTheme,
+
               alt: 'ICTA logo',
               className: 'logo-img',
               style: {
                 objectFit: 'cover',
                 width: '100%',
                 height: 'auto',
-                display: 'inline-block',
-                position: 'relative',
-                maxHeight: '60px'
+                maxHeight: '45px',
+                maxWidth: '140px'
               }
             })
           )
         ),
-        // Desktop Navigation
+        
+        // DESKTOP NAVIGATION - Middle (hidden on mobile)
         React.createElement(
           'div',
-          { className: 'hidden lg:flex items-center flex-1 gap-4 xl:gap-5 justify-end', ref: navRef },
+          { 
+            className: 'hidden lg:flex items-center justify-center flex-1 lg:order-2',
+            ref: navRef 
+          },
           React.createElement(
             'div',
             { className: 'flex items-center gap-4 xl:gap-5' },
@@ -539,27 +563,27 @@ var Navbar = function(props: any) {
                 })
               )
             )
-          ),
-          React.createElement(
-            'div',
-            { ref: rightSectionRef, className: 'flex items-center gap-2 flex-shrink-0' },
-            React.createElement(ThemeToggle, null),
-            React.createElement(
-              'button',
-              {
-                className: 'p-2 rounded-full hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary bg-transparent',
-                onClick: triggerHaptic,
-                'aria-label': 'Search'
-              },
-              React.createElement('span', { className: 'material-symbols-outlined text-xl' }, 'search')
-            )
           )
         ),
-        // Mobile: ThemeToggle on right
+        
+        // RIGHT CONTROLS - Theme Toggle only on mobile, Theme Toggle + Search on desktop
         React.createElement(
-          'div',
-          { className: 'flex lg:hidden items-center gap-2 order-3' },
-          React.createElement(ThemeToggle, null)
+          'div', 
+          { 
+            ref: rightSectionRef,
+            className: 'flex items-center gap-2 flex-shrink-0 order-4 lg:order-3' 
+          },
+          React.createElement(ThemeToggle, null),
+          // Search button - hidden on mobile, visible on desktop
+          React.createElement(
+            'button',
+            {
+              className: 'hidden lg:flex p-2 rounded-full hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary bg-transparent',
+              onClick: triggerHaptic,
+              'aria-label': 'Search'
+            },
+            React.createElement('span', { className: 'material-symbols-outlined text-xl' }, 'search')
+          )
         )
       )
     )
