@@ -996,6 +996,32 @@ a,
 .dark .skeleton-loader {
   background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
 }
+/* Ensure buttons have transparent backgrounds on mobile */
+button.bg-transparent {
+  background-color: transparent !important;
+}
+
+/* Mobile navbar adjustments */
+@media (max-width: 1023px) {
+  .lg\:order-1 {
+    order: 2;
+  }
+  .order-1 {
+    order: 1;
+  }
+  .order-2 {
+    order: 2;
+  }
+  .order-3 {
+    order: 3;
+  }
+}
+
+/* Sidebar dark mode background fix */
+.dark .bg-surface-dark {
+  background-color: #1a1a1a !important;
+}
+
 /*
 /* frontend/src/index.css - Force override any inline styles /
 /* IMPORTANT: These styles take precedence /

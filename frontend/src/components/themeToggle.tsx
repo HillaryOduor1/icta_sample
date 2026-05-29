@@ -2,6 +2,8 @@
 import * as React from "react";
 import { useTheme } from "./theme-provider";
 
+type Theme = "dark" | "light" | "system";
+
 // Haptic feedback function
 var triggerHaptic = function() {
   try {
@@ -30,7 +32,7 @@ export function ThemeToggle() {
     triggerHaptic();
     try {
       var newTheme = theme === "dark" ? "light" : "dark";
-      setTheme(newTheme);
+      setTheme(newTheme as Theme);
       
       var root = window.document.documentElement;
       if (root) {

@@ -39,14 +39,14 @@ var MasterplanSection: React.FC = function() {
           }, tab.title);
         })),
       currentTab && React.createElement("div", { className: "grid lg:grid-cols-2 gap-8 md:gap-12" },
-        React.createElement("div", { className: "space-y-4" },
-          React.createElement("h1", { className: "text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white" }, currentTab.title),
-          React.createElement("p", { className: "text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base" }, currentTab.description),
+        React.createElement("div", { className: "space-y-6" },
+          React.createElement("h1", { className: "text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4" }, currentTab.title),
+          React.createElement("p", { className: "text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base mb-6" }, currentTab.description),
           React.createElement("a", {
             href: currentTab.ctaLink,
             target: "_blank",
             rel: "noopener noreferrer",
-            className: "inline-flex items-center gap-2 text-primary hover:text-green-500 font-bold transition-colors group"
+            className: "inline-flex items-center gap-2 text-primary hover:text-green-500 font-bold transition-colors group mt-2"
           }, React.createElement("span", null, currentTab.ctaText),
             React.createElement("img", {
               src: "https://icta.go.ke//assets/images/icons/arrowsmall.png",
@@ -69,6 +69,77 @@ var MasterplanSection: React.FC = function() {
 };
 
 export default MasterplanSection;
+/*// frontend/src/sections/MasterPlanSection.tsx
+import React, { useState } from 'react';
+import { useContent } from '../content/useContext';
+
+var MasterplanSection: React.FC = function() {
+  var { content, isLoading } = useContent();
+  var _useState = useState(0);
+  var activeTab = _useState[0];
+  var setActiveTab = _useState[1];
+  
+  var masterplanTabs = content.masterplanTabs || [];
+  var currentTab = masterplanTabs[activeTab] || masterplanTabs[0];
+  
+  if (isLoading) {
+    return React.createElement("section", { className: "py-12 md:py-20 bg-gray-50 dark:bg-surface" },
+      React.createElement("div", { className: "max-w-7xl mx-auto px-4" },
+        React.createElement("div", { className: "animate-pulse" },
+          React.createElement("div", { className: "flex flex-wrap gap-2 mb-8 md:mb-12" },
+            React.createElement("div", { className: "h-10 bg-gray-200 dark:bg-gray-700 rounded w-28" }),
+            React.createElement("div", { className: "h-10 bg-gray-200 dark:bg-gray-700 rounded w-24" }),
+            React.createElement("div", { className: "h-10 bg-gray-200 dark:bg-gray-700 rounded w-32" })),
+          React.createElement("div", { className: "grid lg:grid-cols-2 gap-8" },
+            React.createElement("div", { className: "h-64 bg-gray-200 dark:bg-gray-700 rounded" }),
+            React.createElement("div", { className: "h-64 bg-gray-200 dark:bg-gray-700 rounded" })))));
+  }
+  
+  if (masterplanTabs.length === 0 || !currentTab) return null;
+  
+  return React.createElement("section", { className: "py-12 md:py-20 bg-gray-50 dark:bg-surface" },
+    React.createElement("div", { className: "max-w-7xl mx-auto px-4" },
+      React.createElement("div", { className: "flex flex-wrap gap-2 mb-8 md:mb-12 border-b border-gray-200 dark:border-gray-700 pb-4" },
+        masterplanTabs.map(function(tab: any, idx: number) {
+          return React.createElement("button", {
+            key: tab.id || idx,
+            onClick: function() { setActiveTab(idx); },
+            className: "px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold transition-all text-sm md:text-base " + (activeTab === idx
+              ? 'bg-primary text-white shadow-lg'
+              : 'text-gray-600 dark:text-gray-400 hover:text-primary hover:bg-primary/10')
+          }, tab.title);
+        })),
+      currentTab && React.createElement("div", { className: "grid lg:grid-cols-2 gap-8 md:gap-12" },
+        React.createElement("div", { className: "space-y-4" },
+          React.createElement("h1", { className: "text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white" }, currentTab.title),
+          React.createElement("p", { className: "text-gray-600 dark:text-gray-300 leading-relaxed text-sm md:text-base" }, currentTab.description),
+          React.createElement("a", {
+            href: currentTab.ctaLink,
+            target: "_blank",
+            rel: "noopener noreferrer",
+            className: "inline-flex items-center gap-2 text-primary hover:text-green-500 font-bold transition-colors group"
+          }, React.createElement("span", null, currentTab.ctaText),
+            React.createElement("img", {
+              src: "https://icta.go.ke//assets/images/icons/arrowsmall.png",
+              alt: "arrow",
+              className: "w-4 h-4 group-hover:translate-x-1 transition-transform"
+            }))),/
+        currentTab.items && currentTab.items.length > 0 && React.createElement("div", { className: "grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8" },
+          currentTab.items.map(function(item: any, index: number) {
+            return React.createElement("div", { key: index, className: "flex gap-4 items-start group" },
+              React.createElement("div", { className: "flex-shrink-0 mt-1" },
+                React.createElement("img", {
+                  src: item.icon,
+                  alt: item.title,
+                  className: "w-12 h-12 md:w-16 md:h-16 object-contain"
+                })),
+              React.createElement("div", { className: "flex-1" },
+                React.createElement("h3", { className: "text-base md:text-lg font-bold text-gray-900 dark:text-white mb-1 md:mb-2 group-hover:text-primary transition-colors" }, item.title),
+                React.createElement("p", { className: "text-xs md:text-sm text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-3" }, item.description)));
+          })))));
+};
+
+export default MasterplanSection;*/
 
 
 /*last working

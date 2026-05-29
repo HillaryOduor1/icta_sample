@@ -11,6 +11,575 @@ var triggerHaptic = function() {
   } catch (e) {}
 };
 
+var Navbar = function(props: any) {
+  var isSidebarOpen = props.isSidebarOpen;
+  var setIsSidebarOpen = props.setIsSidebarOpen;
+  var { content, isLoading } = useContent();
+  var [openDropdown, setOpenDropdown] = useState(null);
+  var [openNestedDropdown, setOpenNestedDropdown] = useState(null);
+  var [visibleItems, setVisibleItems] = useState<any[]>([]);
+  var [moreItems, setMoreItems] = useState<any[]>([]);
+  var navRef = useRef<any>(null);
+  var rightSectionRef = useRef<any>(null);
+
+  var topNavLinks = (content.topNavLinks || []);
+  var mainNavItems = (content.mainNavItems || []);
+
+  var calculateVisibleItems = function() {
+    if (!navRef.current || !rightSectionRef.current || mainNavItems.length === 0) {
+      return;
+    }
+    
+    var container = navRef.current;
+    var containerWidth = container.offsetWidth;
+    var rightSectionWidth = rightSectionRef.current.offsetWidth + 20;
+    var availableWidth = containerWidth - rightSectionWidth - 100;
+    
+    var tempDiv = document.createElement('div');
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.visibility = 'hidden';
+    tempDiv.style.display = 'flex';
+    tempDiv.style.gap = '1rem';
+    tempDiv.style.fontSize = '0.875rem';
+    tempDiv.style.fontWeight = '500';
+    document.body.appendChild(tempDiv);
+    
+    var itemWidths = [];
+    for (var i = 0; i < mainNavItems.length; i++) {
+      var item = mainNavItems[i];
+      var span = document.createElement('span');
+      span.textContent = item.label;
+      span.style.whiteSpace = 'nowrap';
+      span.style.padding = '0 0.5rem';
+      tempDiv.appendChild(span);
+      itemWidths.push(span.offsetWidth + 16);
+      tempDiv.removeChild(span);
+    }
+    
+    document.body.removeChild(tempDiv);
+    
+    var moreButtonWidth = 80;
+    var totalWidth = 0;
+    var visibleCount = 0;
+    
+    for (var j = 0; j < itemWidths.length; j++) {
+      var remainingItems = itemWidths.length - j;
+      var widthWithMore = totalWidth + itemWidths[j] + (remainingItems > 1 ? moreButtonWidth : 0);
+      
+      if (widthWithMore <= availableWidth) {
+        totalWidth += itemWidths[j];
+        visibleCount++;
+      } else {
+        break;
+      }
+    }
+    
+    if (visibleCount === 0 && mainNavItems.length > 0) {
+      visibleCount = 1;
+    }
+    
+    var visible = mainNavItems.slice(0, visibleCount);
+    var hidden = mainNavItems.slice(visibleCount);
+    
+    setVisibleItems(visible);
+    setMoreItems(hidden);
+  };
+
+  useEffect(function() {
+    if (!isLoading && mainNavItems.length > 0) {
+      var timer = setTimeout(calculateVisibleItems, 100);
+      var handleResize = function() { 
+        setTimeout(calculateVisibleItems, 50); 
+      };
+      window.addEventListener('resize', handleResize);
+      return function() {
+        clearTimeout(timer);
+        window.removeEventListener('resize', handleResize);
+      };
+    }
+  }, [isLoading, mainNavItems]);
+
+  useEffect(function() {
+    calculateVisibleItems();
+  }, [mainNavItems]);
+
+  useEffect(function() {
+    var handleClickOutside = function(event: any) {
+      var target = event.target;
+      if (!target.closest('.dropdown-container') && !target.closest('.more-dropdown')) {
+        setOpenDropdown(null);
+        setOpenNestedDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return function() { 
+      document.removeEventListener('mousedown', handleClickOutside); 
+    };
+  }, []);
+
+  var handleDropdownToggle = function(label: any, event: any) {
+    event.preventDefault();
+    event.stopPropagation();
+    triggerHaptic();
+    setOpenDropdown(openDropdown === label ? null : label);
+    setOpenNestedDropdown(null);
+  };
+
+  var renderNavItem = function(item: any) {
+    if (item.dropdown && item.dropdown.length > 0) {
+      return React.createElement(
+        'div',
+        { key: item.label, className: 'relative dropdown-container' },
+        React.createElement(
+          'button',
+          {
+            onClick: function(e: any) { 
+              handleDropdownToggle(item.label, e); 
+            },
+            className: 'flex items-center gap-1 text-sm font-medium whitespace-nowrap hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded px-2 py-1'
+          },
+          item.label,
+          React.createElement(
+            'svg',
+            {
+              xmlns: 'http://www.w3.org/2000/svg',
+              width: '14',
+              height: '14',
+              viewBox: '0 0 24 24',
+              fill: 'none',
+              stroke: 'currentColor',
+              strokeWidth: '2',
+              strokeLinecap: 'round',
+              strokeLinejoin: 'round',
+              className: 'transition-transform duration-200 ' + (openDropdown === item.label ? 'rotate-180' : '')
+            },
+            React.createElement('polyline', { points: '6 9 12 15 18 9' })
+          )
+        ),
+        openDropdown === item.label && React.createElement(
+          'div',
+          { className: 'absolute top-full left-0 mt-2 w-64 bg-white dark:bg-surface rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50' },
+          item.dropdown.map(function(subItem: any) {
+            return React.createElement(
+              'a',
+              {
+                key: subItem.label,
+                href: subItem.href,
+                target: '_blank',
+                rel: 'noopener noreferrer',
+                className: 'flex items-center justify-between px-4 py-3 text-sm hover:bg-primary/10 transition-colors hover:text-primary border-b border-gray-100 dark:border-gray-800 last:border-0 focus:outline-none focus:ring-2 focus:ring-primary',
+                onClick: triggerHaptic
+              },
+              React.createElement('span', null, subItem.label),
+              React.createElement(
+                'svg',
+                {
+                  xmlns: 'http://www.w3.org/2000/svg',
+                  width: '12',
+                  height: '12',
+                  viewBox: '0 0 24 24',
+                  fill: 'none',
+                  stroke: 'currentColor',
+                  strokeWidth: '2',
+                  strokeLinecap: 'round',
+                  strokeLinejoin: 'round',
+                  className: 'opacity-50 flex-shrink-0 ml-2'
+                },
+                React.createElement('path', { d: 'M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6' }),
+                React.createElement('polyline', { points: '15 3 21 3 21 9' }),
+                React.createElement('line', { x1: '10', y1: '14', x2: '21', y2: '3' })
+              )
+            );
+          })
+        )
+      );
+    }
+    
+    return React.createElement(
+      'div',
+      { key: item.label, className: 'relative dropdown-container' },
+      React.createElement(
+        'a',
+        {
+          href: item.href || '#',
+          target: item.external ? '_blank' : '_self',
+          rel: item.external ? 'noopener noreferrer' : '',
+          className: 'flex items-center gap-1 text-sm font-medium whitespace-nowrap hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded px-2 py-1',
+          onClick: triggerHaptic
+        },
+        item.label,
+        item.external && React.createElement(
+          'svg',
+          {
+            xmlns: 'http://www.w3.org/2000/svg',
+            width: '12',
+            height: '12',
+            viewBox: '0 0 24 24',
+            fill: 'none',
+            stroke: 'currentColor',
+            strokeWidth: '2',
+            strokeLinecap: 'round',
+            strokeLinejoin: 'round'
+          },
+          React.createElement('path', { d: 'M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6' }),
+          React.createElement('polyline', { points: '15 3 21 3 21 9' }),
+          React.createElement('line', { x1: '10', y1: '14', x2: '21', y2: '3' })
+        )
+      )
+    );
+  };
+
+  if (isLoading) {
+    return React.createElement(
+      'header',
+      { className: 'sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-primary/10' },
+      React.createElement(
+        'div',
+        { className: 'bg-primary hidden md:block' },
+        React.createElement(
+          'div',
+          { className: 'max-w-7xl mx-auto px-4 py-2' },
+          React.createElement(
+            'div',
+            { className: 'flex justify-end gap-3' },
+            React.createElement('div', { className: 'h-4 w-20 bg-white/20 rounded animate-pulse' }),
+            React.createElement('div', { className: 'h-4 w-32 bg-white/20 rounded animate-pulse' })
+          )
+        )
+      ),
+      React.createElement(
+        'div',
+        { className: 'max-w-7xl mx-auto px-4 py-3' },
+        React.createElement(
+          'div',
+          { className: 'flex justify-between items-center' },
+          React.createElement('div', { className: 'h-12 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse' }),
+          React.createElement(
+            'div',
+            { className: 'hidden lg:flex gap-4' },
+            React.createElement('div', { className: 'h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded animate-pulse' }),
+            React.createElement('div', { className: 'h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse' })
+          )
+        )
+      )
+    );
+  }
+
+  return React.createElement(
+    'header',
+    { className: 'sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-primary/10' },
+    topNavLinks.length > 0 && React.createElement(
+      'div',
+      { className: 'bg-primary hidden md:block' },
+      React.createElement(
+        'div',
+        { className: 'max-w-7xl mx-auto px-4 py-2' },
+        React.createElement(
+          'div',
+          { className: 'flex flex-wrap items-center justify-center md:justify-end gap-3 text-xs' },
+          topNavLinks.map(function(link: any, idx: number) {
+            return React.createElement(
+              'a',
+              {
+                key: idx,
+                href: link.href,
+                target: '_blank',
+                rel: 'noopener noreferrer',
+                className: 'flex items-center gap-1 text-white hover:text-green-400 transition-colors focus:outline-none focus:ring-2 focus:ring-white rounded px-2 py-1',
+                onClick: triggerHaptic
+              },
+              link.icon === 'mail' && React.createElement(
+                'svg',
+                {
+                  xmlns: 'http://www.w3.org/2000/svg',
+                  width: '14',
+                  height: '14',
+                  viewBox: '0 0 24 24',
+                  fill: 'none',
+                  stroke: 'currentColor',
+                  strokeWidth: '2',
+                  strokeLinecap: 'round',
+                  strokeLinejoin: 'round'
+                },
+                React.createElement('rect', { x: '2', y: '4', width: '20', height: '16', rx: '2' }),
+                React.createElement('path', { d: 'm22 7-10 7L2 7' })
+              ),
+              React.createElement('span', null, link.label)
+            );
+          })
+        )
+      )
+    ),
+    React.createElement(
+      'div',
+      { className: 'max-w-7xl mx-auto px-4 py-3' },
+      React.createElement(
+        'div',
+        { className: 'flex flex-wrap items-center justify-between gap-4' },
+        // Mobile: Hamburger on left, Logo on right
+        React.createElement(
+          'div',
+          { className: 'flex lg:hidden items-center gap-2 order-1' },
+          React.createElement(
+            'button',
+            {
+              onClick: function() { 
+                triggerHaptic(); 
+                setIsSidebarOpen(!isSidebarOpen); 
+              },
+              className: 'p-2 rounded-lg hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary bg-transparent'
+            },
+            isSidebarOpen ? 
+              React.createElement(
+                'svg',
+                {
+                  xmlns: 'http://www.w3.org/2000/svg',
+                  width: '22',
+                  height: '22',
+                  viewBox: '0 0 24 24',
+                  fill: 'none',
+                  stroke: 'currentColor',
+                  strokeWidth: '2',
+                  strokeLinecap: 'round',
+                  strokeLinejoin: 'round'
+                },
+                React.createElement('line', { x1: '18', y1: '6', x2: '6', y2: '18' }),
+                React.createElement('line', { x1: '6', y1: '6', x2: '18', y2: '18' })
+              ) :
+              React.createElement(
+                'svg',
+                {
+                  xmlns: 'http://www.w3.org/2000/svg',
+                  width: '22',
+                  height: '22',
+                  viewBox: '0 0 24 24',
+                  fill: 'none',
+                  stroke: 'currentColor',
+                  strokeWidth: '2',
+                  strokeLinecap: 'round',
+                  strokeLinejoin: 'round'
+                },
+                React.createElement('line', { x1: '3', y1: '12', x2: '21', y2: '12' }),
+                React.createElement('line', { x1: '3', y1: '6', x2: '21', y2: '6' }),
+                React.createElement('line', { x1: '3', y1: '18', x2: '21', y2: '18' })
+              )
+          )
+        ),
+        // Logo - on mobile goes to right, on desktop stays left
+        React.createElement(
+          'div',
+          { className: 'flex-shrink-0 lg:order-1 order-2', style: { width: '20%' } },
+          React.createElement(
+            'a',
+            {
+              href: 'https://icta.go.ke/',
+              target: '_blank',
+              rel: 'noopener noreferrer',
+              className: 'flex items-center w-full focus:outline-none focus:ring-2 focus:ring-primary rounded'
+            },
+            React.createElement('img', {
+              src: 'https://icta.go.ke//assets/images/ictalogo.png',
+              alt: 'ICTA logo',
+              className: 'logo-img',
+              style: {
+                objectFit: 'cover',
+                width: '100%',
+                height: 'auto',
+                display: 'inline-block',
+                position: 'relative',
+                maxHeight: '60px'
+              }
+            })
+          )
+        ),
+        // Desktop Navigation
+        React.createElement(
+          'div',
+          { className: 'hidden lg:flex items-center flex-1 gap-4 xl:gap-5 justify-end', ref: navRef },
+          React.createElement(
+            'div',
+            { className: 'flex items-center gap-4 xl:gap-5' },
+            visibleItems.map(function(item: any) { 
+              return renderNavItem(item); 
+            }),
+            moreItems.length > 0 && React.createElement(
+              'div',
+              { className: 'relative more-dropdown' },
+              React.createElement(
+                'button',
+                {
+                  onClick: function(e: any) { 
+                    handleDropdownToggle('more', e); 
+                  },
+                  className: 'flex items-center gap-1 text-sm font-medium whitespace-nowrap hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded px-2 py-1'
+                },
+                'More',
+                React.createElement(
+                  'svg',
+                  {
+                    xmlns: 'http://www.w3.org/2000/svg',
+                    width: '14',
+                    height: '14',
+                    viewBox: '0 0 24 24',
+                    fill: 'none',
+                    stroke: 'currentColor',
+                    strokeWidth: '2',
+                    strokeLinecap: 'round',
+                    strokeLinejoin: 'round',
+                    className: 'transition-transform duration-200 ' + (openDropdown === 'more' ? 'rotate-180' : '')
+                  },
+                  React.createElement('polyline', { points: '6 9 12 15 18 9' })
+                )
+              ),
+              openDropdown === 'more' && React.createElement(
+                'div',
+                { className: 'absolute top-full right-0 mt-2 w-80 bg-white dark:bg-surface rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50 max-h-96 overflow-y-auto' },
+                moreItems.map(function(item: any) {
+                  if (item.dropdown && item.dropdown.length > 0) {
+                    return React.createElement(
+                      'div',
+                      {
+                        key: item.label,
+                        className: 'relative border-b border-gray-100 dark:border-gray-800 last:border-0',
+                        onMouseEnter: function() { 
+                          setOpenNestedDropdown(item.label); 
+                        },
+                        onMouseLeave: function() { 
+                          setOpenNestedDropdown(null); 
+                        }
+                      },
+                      React.createElement(
+                        'div',
+                        { className: 'flex items-center justify-between px-4 py-3 text-sm hover:bg-primary/10 cursor-pointer' },
+                        React.createElement('span', null, item.label),
+                        React.createElement(
+                          'svg',
+                          {
+                            xmlns: 'http://www.w3.org/2000/svg',
+                            width: '14',
+                            height: '14',
+                            viewBox: '0 0 24 24',
+                            fill: 'none',
+                            stroke: 'currentColor',
+                            strokeWidth: '2',
+                            strokeLinecap: 'round',
+                            strokeLinejoin: 'round'
+                          },
+                          React.createElement('polyline', { points: '9 18 15 12 9 6' })
+                        )
+                      ),
+                      openNestedDropdown === item.label && React.createElement(
+                        'div',
+                        { className: 'absolute left-full top-0 mt-0 ml-1 w-64 bg-white dark:bg-surface rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden z-[60]' },
+                        item.dropdown.map(function(subItem: any) {
+                          return React.createElement(
+                            'a',
+                            {
+                              key: subItem.label,
+                              href: subItem.href,
+                              target: '_blank',
+                              rel: 'noopener noreferrer',
+                              className: 'flex items-center justify-between px-4 py-3 text-sm hover:bg-primary/10 transition-colors hover:text-primary border-b border-gray-100 dark:border-gray-800 last:border-0 focus:outline-none focus:ring-2 focus:ring-primary',
+                              onClick: triggerHaptic
+                            },
+                            React.createElement('span', null, subItem.label),
+                            React.createElement(
+                              'svg',
+                              {
+                                xmlns: 'http://www.w3.org/2000/svg',
+                                width: '12',
+                                height: '12',
+                                viewBox: '0 0 24 24',
+                                fill: 'none',
+                                stroke: 'currentColor',
+                                strokeWidth: '2',
+                                strokeLinecap: 'round',
+                                strokeLinejoin: 'round',
+                                className: 'opacity-50 flex-shrink-0 ml-2'
+                              },
+                              React.createElement('path', { d: 'M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6' }),
+                              React.createElement('polyline', { points: '15 3 21 3 21 9' }),
+                              React.createElement('line', { x1: '10', y1: '14', x2: '21', y2: '3' })
+                            )
+                          );
+                        })
+                      )
+                    );
+                  }
+                  return React.createElement(
+                    'a',
+                    {
+                      key: item.label,
+                      href: item.href || '#',
+                      target: '_blank',
+                      rel: 'noopener noreferrer',
+                      className: 'flex items-center justify-between px-4 py-3 text-sm hover:bg-primary/10 transition-colors hover:text-primary border-b border-gray-100 dark:border-gray-800 last:border-0 focus:outline-none focus:ring-2 focus:ring-primary',
+                      onClick: triggerHaptic
+                    },
+                    React.createElement('span', null, item.label),
+                    React.createElement(
+                      'svg',
+                      {
+                        xmlns: 'http://www.w3.org/2000/svg',
+                        width: '12',
+                        height: '12',
+                        viewBox: '0 0 24 24',
+                        fill: 'none',
+                        stroke: 'currentColor',
+                        strokeWidth: '2',
+                        strokeLinecap: 'round',
+                        strokeLinejoin: 'round',
+                        className: 'opacity-50 flex-shrink-0 ml-2'
+                      },
+                      React.createElement('path', { d: 'M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6' }),
+                      React.createElement('polyline', { points: '15 3 21 3 21 9' }),
+                      React.createElement('line', { x1: '10', y1: '14', x2: '21', y2: '3' })
+                    )
+                  );
+                })
+              )
+            )
+          ),
+          React.createElement(
+            'div',
+            { ref: rightSectionRef, className: 'flex items-center gap-2 flex-shrink-0' },
+            React.createElement(ThemeToggle, null),
+            React.createElement(
+              'button',
+              {
+                className: 'p-2 rounded-full hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-primary bg-transparent',
+                onClick: triggerHaptic,
+                'aria-label': 'Search'
+              },
+              React.createElement('span', { className: 'material-symbols-outlined text-xl' }, 'search')
+            )
+          )
+        ),
+        // Mobile: ThemeToggle on right
+        React.createElement(
+          'div',
+          { className: 'flex lg:hidden items-center gap-2 order-3' },
+          React.createElement(ThemeToggle, null)
+        )
+      )
+    )
+  );
+};
+
+export default Navbar;
+/*// frontend/src/components/Navbar.tsx
+import React, { useState, useRef, useEffect } from 'react';
+import { ThemeToggle } from './themeToggle';
+import { useContent } from '../content/useContext';
+
+var triggerHaptic = function() {
+  try {
+    if (window.navigator && typeof window.navigator.vibrate === "function") {
+      window.navigator.vibrate(50);
+    }
+  } catch (e) {}
+};
+
 var Navbar = function({ isSidebarOpen, setIsSidebarOpen }) {
   var { content, isLoading } = useContent();
   var [openDropdown, setOpenDropdown] = useState(null);
@@ -556,7 +1125,7 @@ var Navbar = function({ isSidebarOpen, setIsSidebarOpen }) {
   );
 };
 
-export default Navbar;
+export default Navbar;*/
 /*last
 // frontend/src/components/Navbar.tsx
 import React, { useState, useRef, useEffect } from 'react';

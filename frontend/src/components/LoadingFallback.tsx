@@ -13,6 +13,154 @@ var getInitialTheme = function() {
         return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
       }
     }
+    return "light";
+  } catch (e) {
+    return "light";
+  }
+};
+
+var LoadingFallback = function() {
+  var _useState = React.useState(getInitialTheme);
+  var theme = _useState[0];
+  var setTheme = _useState[1];
+
+  React.useEffect(function() {
+    var observer = new MutationObserver(function() {
+      var isDarkMode = document.documentElement.classList.contains("dark");
+      setTheme(isDarkMode ? "dark" : "light");
+    });
+    
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"]
+    });
+    
+    var isDarkMode = document.documentElement.classList.contains("dark");
+    setTheme(isDarkMode ? "dark" : "light");
+    
+    return function() { observer.disconnect(); };
+  }, []);
+
+  var isDark = theme === "dark";
+  var bgColor = isDark ? "#0a0a0a" : "#f8f5f5";
+  var primaryColor = "#f20d0d";
+  var textColor = isDark ? "#ffffff" : "#1a1a1a";
+  var arcColorPrimary = primaryColor;
+  var arcColorAccent = "#00a86b";
+  var arcColorSecondary = isDark ? "#ffffff" : primaryColor;
+
+  return React.createElement("div", {
+    className: "flex items-center justify-center min-h-screen",
+    style: { backgroundColor: bgColor }
+  },
+    React.createElement("div", {
+      style: {
+        position: 'relative',
+        width: '280px',
+        height: '280px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }
+    },
+      // Outer rotating ring
+      React.createElement("div", {
+        style: {
+          position: 'absolute',
+          width: '280px',
+          height: '280px',
+          border: '5px solid transparent',
+          borderTopColor: arcColorPrimary,
+          borderRightColor: arcColorPrimary,
+          borderRadius: '50%',
+          animation: 'spin 1.2s linear infinite'
+        }
+      }),
+      // Middle rotating ring (counter-rotation)
+      React.createElement("div", {
+        style: {
+          position: 'absolute',
+          width: '250px',
+          height: '250px',
+          border: '5px solid transparent',
+          borderBottomColor: arcColorAccent,
+          borderLeftColor: arcColorAccent,
+          borderRadius: '50%',
+          animation: 'spinReverse 1.4s linear infinite'
+        }
+      }),
+      // Inner rotating ring
+      React.createElement("div", {
+        style: {
+          position: 'absolute',
+          width: '220px',
+          height: '220px',
+          border: '5px solid transparent',
+          borderTopColor: arcColorSecondary,
+          borderRightColor: arcColorSecondary,
+          borderRadius: '50%',
+          animation: 'spin 1.6s linear infinite'
+        }
+      }),
+      // Center text
+      React.createElement("div", {
+        style: {
+          position: 'relative',
+          zIndex: 10,
+          color: textColor,
+          fontFamily: 'Space Grotesk, sans-serif',
+          fontSize: '14px',
+          fontWeight: '700',
+          letterSpacing: '3px',
+          textAlign: 'center'
+        }
+      }, "ICT AUTHORITY"),
+      // Pulsing dot
+      React.createElement("div", {
+        style: {
+          position: 'absolute',
+          width: '8px',
+          height: '8px',
+          backgroundColor: primaryColor,
+          borderRadius: '50%',
+          animation: 'pulse 2s ease-in-out infinite'
+        }
+      })
+    ),
+    // Add CSS animations
+    React.createElement("style", null, `
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes spinReverse {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 0.3; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.5); }
+      }
+    `)
+  );
+};
+
+export default LoadingFallback;
+/*// frontend/src/components/LoadingFallback.tsx
+import * as React from "react";
+
+// ES5-safe theme detection
+var getInitialTheme = function() {
+  try {
+    if (typeof window !== "undefined") {
+      var saved = localStorage.getItem("theme");
+      if (saved === "light") return "light";
+      if (saved === "dark") return "dark";
+      // Check system preference
+      if (window.matchMedia && typeof window.matchMedia === "function") {
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+    }
     // Default to light mode (instead of dark)
     return "light";
   } catch (e) {
@@ -233,4 +381,4 @@ var LoadingFallback = function() {
   );
 };
 
-export default LoadingFallback;
+export default LoadingFallback;*/
