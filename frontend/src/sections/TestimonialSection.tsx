@@ -52,6 +52,8 @@ const TestimonialSection: React.FC = () => {
 };
 
 export default TestimonialSection;
+
+
 /*// frontend/src/sections/TestimonialSection.tsx
 import React from 'react';
 import { useContent } from '../content/useContext';

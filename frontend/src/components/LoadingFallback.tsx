@@ -1,4 +1,150 @@
 // frontend/src/components/LoadingFallback.tsx
+import React, { useState, useEffect } from "react";
+
+// Theme detection - defaults to system preference
+const getInitialTheme = (): "light" | "dark" => {
+  try {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("theme");
+      if (saved === "light") return "light";
+      if (saved === "dark") return "dark";
+      // Check system preference
+      if (window.matchMedia && typeof window.matchMedia === "function") {
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+    }
+    // Default to system preference (check once more)
+    if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
+    return "light";
+  } catch (e) {
+    return "light";
+  }
+};
+
+const LoadingFallback: React.FC = () => {
+  const [theme, setTheme] = useState<"light" | "dark">(getInitialTheme);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      const isDarkMode = document.documentElement.classList.contains("dark");
+      setTheme(isDarkMode ? "dark" : "light");
+    });
+    
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"]
+    });
+    
+    const isDarkMode = document.documentElement.classList.contains("dark");
+    setTheme(isDarkMode ? "dark" : "light");
+    
+    return () => { observer.disconnect(); };
+  }, []);
+
+  const isDark = theme === "dark";
+  const bgColor = isDark ? "#0a0a0a" : "#f8f5f5";
+  const textColor = isDark ? "#ffffff" : "#1a1a1a";
+  
+  // Ring colors based on theme
+  // Light mode: Red (#f20d0d), Green (#00a86b), Black (#000000)
+  // Dark mode: Red (#f20d0d), Green (#00a86b), White (#ffffff)
+  const outerRingColor = isDark ? "#f20d0d" : "#f20d0d"; // Red for both
+  const middleRingColor = isDark ? "#00a86b" : "#00a86b"; // Green for both
+  const innerRingColor = isDark ? "#ffffff" : "#000000"; // White for dark, Black for light
+
+  return (
+    <div
+      className="flex items-center justify-center min-h-screen"
+      style={{ backgroundColor: bgColor }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          width: '280px',
+          height: '280px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        {/* Outer rotating ring - Red */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '280px',
+            height: '280px',
+            border: '5px solid transparent',
+            borderTopColor: outerRingColor,
+            borderRightColor: outerRingColor,
+            borderRadius: '50%',
+            animation: 'spin 1.2s linear infinite'
+          }}
+        />
+        
+        {/* Middle rotating ring (counter-rotation) - Green */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '250px',
+            height: '250px',
+            border: '5px solid transparent',
+            borderBottomColor: middleRingColor,
+            borderLeftColor: middleRingColor,
+            borderRadius: '50%',
+            animation: 'spinReverse 1.4s linear infinite'
+          }}
+        />
+        
+        {/* Inner rotating ring - Black (light mode) or White (dark mode) */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '220px',
+            height: '220px',
+            border: '5px solid transparent',
+            borderTopColor: innerRingColor,
+            borderRightColor: innerRingColor,
+            borderRadius: '50%',
+            animation: 'spin 1.6s linear infinite'
+          }}
+        />
+        
+        {/* Center text */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 10,
+            color: textColor,
+            fontFamily: 'Space Grotesk, sans-serif',
+            fontSize: '14px',
+            fontWeight: '700',
+            letterSpacing: '3px',
+            textAlign: 'center'
+          }}
+        >
+          ICT AUTHORITY
+        </div>
+      </div>
+      
+      {/* CSS Animations */}
+      <style>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes spinReverse {
+          from { transform: rotate(360deg); }
+          to { transform: rotate(0deg); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default LoadingFallback;
+/*// frontend/src/components/LoadingFallback.tsx
 import * as React from "react";
 
 // ES5-safe theme detection
@@ -145,7 +291,7 @@ var LoadingFallback = function() {
   );
 };
 
-export default LoadingFallback;
+export default LoadingFallback;*/
 
 /*// frontend/src/components/LoadingFallback.tsx
 import * as React from "react";

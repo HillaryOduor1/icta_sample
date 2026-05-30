@@ -11,6 +11,299 @@ interface SidebarProps {
 }
 
 // Haptic feedback function
+const triggerHaptic = (): void => {
+  try {
+    if (window.navigator && typeof window.navigator.vibrate === "function") {
+      window.navigator.vibrate(50);
+    }
+  } catch (e) {}
+};
+
+// Helper to get icon component by name - using simple SVGs for ES5 compatibility
+const getIconComponent = (iconName: string): React.ReactNode => {
+  const icons: Record<string, React.ReactNode> = {
+    home: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2h-5v-7H9v7H5a2 2 0 0 1-2-2z" />
+      </svg>
+    ),
+    info: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="16" x2="12" y2="12" />
+        <line x1="12" y1="8" x2="12.01" y2="8" />
+      </svg>
+    ),
+    briefcase: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+      </svg>
+    )
+  };
+  return icons[iconName?.toLowerCase()] || (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+      <polyline points="15 3 21 3 21 9" />
+      <line x1="10" y1="14" x2="21" y2="3" />
+    </svg>
+  );
+};
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggleSidebar }) => {
+  const { content, isLoading } = useContent();
+  const [openDropdowns, setOpenDropdowns] = useState<{ [key: string]: boolean }>({});
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const scrollYRef = useRef<number>(0);
+
+  const topNavLinks = content.topNavLinks || [];
+  const mainNavItems = content.mainNavItems || [];
+
+  const sidebarNavItems = mainNavItems.map((item: any) => ({
+    ...item,
+    icon: getIconComponent(item.label?.toLowerCase().replace(/\s/g, ''))
+  }));
+
+  const toggleDropdown = (name: string): void => {
+    triggerHaptic();
+    setOpenDropdowns((prev) => ({ ...prev, [name]: !prev[name] }));
+  };
+
+  const handleToggle = (): void => {
+    triggerHaptic();
+    toggleSidebar();
+  };
+
+  // Prevent body scroll when sidebar is open
+  useEffect(() => {
+    if (isOpen) {
+      // Save current scroll position
+      scrollYRef.current = window.scrollY;
+      
+      // Apply styles to prevent scrolling
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollYRef.current}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.width = '100%';
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      // Restore scrolling
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      
+      // Restore scroll position
+      window.scrollTo(0, scrollYRef.current);
+    }
+    
+    return () => {
+      // Cleanup: ensure scrolling is restored if component unmounts while open
+      if (isOpen) {
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+      }
+    };
+  }, [isOpen]);
+
+  // Close on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent): void => {
+      if (isOpen && sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        handleToggle();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => { document.removeEventListener("mousedown", handleClickOutside); };
+  }, [isOpen]);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      if (isOpen && event.key === 'Escape') {
+        handleToggle();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => { document.removeEventListener('keydown', handleKeyDown); };
+  }, [isOpen]);
+
+  // Swipe to close on touch devices
+  useEffect(() => {
+    let touchStartX = 0;
+    const onTouchStart = (e: TouchEvent): void => { 
+      touchStartX = e.changedTouches[0].clientX; 
+    };
+    const onTouchMove = (e: TouchEvent): void => {
+      if (!isOpen) return;
+      const deltaX = e.changedTouches[0].clientX - touchStartX;
+      if (deltaX < -50) {
+        handleToggle();
+      }
+    };
+    window.addEventListener('touchstart', onTouchStart);
+    window.addEventListener('touchmove', onTouchMove);
+    return () => {
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove', onTouchMove);
+    };
+  }, [isOpen]);
+
+  if (isLoading) {
+    return (
+      <>
+        {isOpen && <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden" />}
+        <aside 
+          className={`fixed top-0 left-0 h-full w-80 z-50 shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
+          style={{ height: '100%' }}
+        >
+          <div className="sticky top-0 bg-red-600 p-4">
+            <div className="h-12 w-32 bg-white/20 rounded animate-pulse" />
+          </div>
+          <div className="flex-1 p-4 space-y-6">
+            <div className="space-y-2">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="h-10 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </aside>
+      </>
+    );
+  }
+
+  return (
+    <>
+      {/* Overlay - only shown on mobile when sidebar is open */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity duration-300 lg:hidden"
+          onClick={handleToggle}
+          aria-hidden="true"
+        />
+      )}
+      <aside
+        ref={sidebarRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Mobile navigation menu"
+        className={`fixed top-0 left-0 h-full w-80 z-50 shadow-xl transform transition-transform duration-300 ease-in-out overflow-y-auto flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        style={{ height: '100%', backgroundColor: '#ffffff' }}
+      >
+        <style>{`
+          /* Fallback for ES5 browsers - ensure dark mode background */
+          .dark .sidebar-fallback,
+          .dark-mode .sidebar-fallback {
+            background-color: #1a1a1a !important;
+          }
+        `}</style>
+        <div className="sticky top-0 bg-red-600 p-4 text-white flex justify-between items-center">
+          <a href="https://icta.go.ke/" target="_blank" rel="noopener noreferrer" className="flex items-center">
+            <img
+              src="https://icta.go.ke//assets/images/ictalogo.png"
+              alt="ICTA logo"
+              className="h-auto w-auto max-h-12 max-w-[150px] brightness-0 invert"
+            />
+          </a>
+          <button
+            onClick={handleToggle}
+            className="p-1 hover:bg-white/20 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-white"
+            aria-label="Close sidebar"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+        <div className="flex-1 p-4 space-y-6 overflow-y-auto">
+          {topNavLinks.length > 0 && (
+            <div>
+              <h3 className="text-xs font-semibold text-red-600 uppercase tracking-wider mb-3 px-2">Quick Links</h3>
+              <div className="space-y-1">
+                {topNavLinks.map((link: any, idx: number) => (
+                  <SidebarItem
+                    key={link.label || idx}
+                    icon={
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                        <polyline points="22,6 12,13 2,6" />
+                      </svg>
+                    }
+                    label={link.label}
+                    href={link.href}
+                    external={true}
+                    onClick={handleToggle}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+          <div className="border-t border-gray-200 dark:border-gray-800" />
+          {sidebarNavItems.length > 0 && (
+            <div>
+              <h3 className="text-xs font-semibold text-red-600 uppercase tracking-wider mb-3 px-2">Navigation</h3>
+              <div className="space-y-1">
+                {sidebarNavItems.map((item: any) => {
+                  if (item.dropdown && item.dropdown.length > 0) {
+                    return (
+                      <SidebarDropdown
+                        key={item.label}
+                        name={item.label.toLowerCase().replace(/\s/g, '-')}
+                        label={item.label}
+                        icon={item.icon}
+                        items={item.dropdown}
+                        isOpen={openDropdowns[item.label] || false}
+                        onToggle={() => toggleDropdown(item.label)}
+                        onItemClick={handleToggle}
+                      />
+                    );
+                  }
+                  return (
+                    <SidebarItem
+                      key={item.label}
+                      icon={item.icon}
+                      label={item.label}
+                      href={item.href}
+                      external={item.external}
+                      onClick={handleToggle}
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </div>
+        <SidebarFooter />
+      </aside>
+    </>
+  );
+};
+
+export default Sidebar;
+/*// frontend/src/components/Sidebar/Sidebar.tsx
+import React, { useState, useRef, useEffect } from 'react';
+import SidebarItem from './SidebarItem';
+import SidebarDropdown from './SidebarDropdown';
+import SidebarFooter from './SidebarFooter';
+import { useContent } from '../../content/useContext';
+
+interface SidebarProps {
+  isOpen: boolean;
+  toggleSidebar: () => void;
+}
+
+// Haptic feedback function
 var triggerHaptic = function() {
   try {
     if (window.navigator && typeof window.navigator.vibrate === "function") {
@@ -244,7 +537,9 @@ var Sidebar = function({ isOpen, toggleSidebar }: SidebarProps) {
     React.createElement(SidebarFooter, null)));
 };
 
-export default Sidebar;
+export default Sidebar;*/
+
+
 /*// frontend/src/components/Sidebar/Sidebar.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import SidebarItem from './SidebarItem';
