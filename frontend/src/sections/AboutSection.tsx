@@ -23,6 +23,166 @@ const AboutSection: React.FC = () => {
   
   if (isLoading) {
     return (
+      <section className="about-section" style={{ position: 'relative', paddingTop: '3rem', paddingBottom: '3rem', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0, backgroundImage: "url('/assets/bg_image.jpg')", backgroundPosition: 'center', backgroundSize: 'cover' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 1, backgroundColor: 'rgba(255,255,255,0.8)' }} />
+        <div className="relative z-10 max-w-7xl mx-auto px-4">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+  
+  const about = content.about || {};
+  const aboutItems: AboutItem[] = content.aboutItems || [];
+  const fallbackIcon = 'https://icta.go.ke//assets/images/icons/digi.png';
+  
+  const handleImageError = (index: number): void => {
+    setImageErrors((prev) => ({ ...prev, [index]: true }));
+  };
+  
+  return (
+    <section className="about-section" style={{ position: 'relative', paddingTop: '3rem', paddingBottom: '3rem', overflow: 'hidden' }}>
+      {/* Background Image */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 0,
+          backgroundImage: "url('/assets/bg_image.jpg')",
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          backgroundAttachment: 'fixed'
+        }}
+      />
+      {/* Overlay - Light mode white, Dark mode black */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 1,
+          backgroundColor: 'rgba(255, 255, 255, 0.85)'
+        }}
+        className="dark:bg-black/85"
+      />
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16">
+          {/* Left Column - Main About */}
+          <div className="space-y-4 md:space-y-6">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight" style={{ color: '#1a1a1a' }}>
+              {about.title || 'About ICT Authority'}
+            </h1>
+            <p className="leading-relaxed text-sm sm:text-base md:text-lg" style={{ color: '#4a4a4a' }}>
+              {about.description1 || "The Authority's broad mandate entails enforcing ICT standards in Government, establishing, developing and maintaining secure ICT infrastructure systems, supervision of electronic communications, as well as promoting digital literacy, capacity, innovation and enterprise."}
+            </p>
+            <a
+              href="https://icta.go.ke/page?q=6&type=about_ict_authority"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={triggerHaptic}
+              className="inline-flex items-center gap-2 text-white px-6 py-3 md:px-8 md:py-4 rounded-lg font-bold text-sm md:text-base transition-all duration-300 hover:scale-105 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 group"
+              style={{ backgroundColor: '#dc2626' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#16a34a'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+            >
+              <span>Learn More</span>
+              <svg className="w-4 h-4 md:w-5 md:h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+          
+          {/* Right Column - About Items Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
+            {aboutItems.map((item: AboutItem, index: number) => (
+              <div 
+                key={index} 
+                className="group rounded-xl p-4 md:p-6 transition-all duration-300 hover:shadow-xl hover:scale-[1.02]"
+                style={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  border: '1px solid rgba(0, 0, 0, 0.1)'
+                }}
+              >
+                <div className="flex gap-4 md:gap-5 items-start">
+                  <div className="flex-shrink-0">
+                    <img
+                      src={imageErrors[index] ? fallbackIcon : (item.icon || fallbackIcon)}
+                      alt={item.title}
+                      className="w-12 h-12 md:w-16 md:h-16 object-contain transition-transform duration-300 group-hover:scale-110"
+                      onError={() => handleImageError(index)}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-base md:text-lg lg:text-xl font-bold mb-2 md:mb-3 transition-colors duration-300" style={{ color: '#1a1a1a' }}>
+                      {item.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm md:text-base mb-3 md:mb-4 leading-relaxed" style={{ color: '#6b7280' }}>
+                      {item.description}
+                    </p>
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={triggerHaptic}
+                      className="inline-flex items-center gap-1 text-sm font-semibold transition-all duration-300 group-hover:gap-2 focus:outline-none focus:ring-2 focus:ring-red-500 rounded"
+                      style={{ color: '#dc2626' }}
+                      onMouseEnter={(e) => e.currentTarget.style.color = '#16a34a'}
+                      onMouseLeave={(e) => e.currentTarget.style.color = '#dc2626'}
+                    >
+                      Learn More
+                      <svg className="w-3 h-3 md:w-4 md:h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default AboutSection;
+/*// frontend/src/sections/AboutSection.tsx
+import React, { useState } from 'react';
+import { useContent } from '../content/useContext';
+
+interface AboutItem {
+  title: string;
+  description: string;
+  icon?: string;
+  link: string;
+}
+
+const AboutSection: React.FC = () => {
+  const { content, isLoading } = useContent();
+  const [imageErrors, setImageErrors] = useState<Record<number, boolean>>({});
+  
+  const triggerHaptic = (): void => {
+    try {
+      if (window.navigator && typeof window.navigator.vibrate === "function") {
+        window.navigator.vibrate(50);
+      }
+    } catch (e) {}
+  };
+  
+  if (isLoading) {
+    return (
       <section className="relative py-12 md:py-20 overflow-hidden">
         <div className="absolute inset-0 z-0 bg-cover bg-center" style={{ backgroundImage: "url('/assets/bg_image.jpg')" }} />
         <div className="absolute inset-0 z-1 bg-white/80 dark:bg-black/80" />
@@ -121,7 +281,8 @@ const AboutSection: React.FC = () => {
   );
 };
 
-export default AboutSection;
+export default AboutSection;*/
+
 
 /*// frontend/src/sections/AboutSection.tsx
 import React, { useState } from 'react';
