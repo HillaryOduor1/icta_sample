@@ -1,97 +1,86 @@
 // frontend/src/components/themeToggle.tsx
-import * as React from "react";
+import React from "react";
 import { useTheme } from "./theme-provider";
 
 type Theme = "light" | "dark";
 
-function triggerHaptic() {
+const triggerHaptic = (): void => {
   try {
-    if (
-      window.navigator &&
-      typeof window.navigator.vibrate === "function"
-    ) {
+    if (window.navigator && typeof window.navigator.vibrate === "function") {
       window.navigator.vibrate(50);
     }
-  } catch (e) {}
-}
+  } catch (e) {
+    // Silently fail
+  }
+};
 
-export function ThemeToggle() {
-  var themeContext = useTheme();
+export const ThemeToggle: React.FC = () => {
+  const themeContext = useTheme();
+  const resolvedTheme = themeContext.resolvedTheme;
+  const setTheme = themeContext.setTheme;
 
-  var resolvedTheme = themeContext.resolvedTheme;
-  var setTheme = themeContext.setTheme;
-
-  var toggleTheme = React.useCallback(function () {
+  const toggleTheme = React.useCallback((): void => {
     triggerHaptic();
-
-    var nextTheme: Theme =
-      resolvedTheme === "dark"
-        ? "light"
-        : "dark";
-
+    const nextTheme: Theme = resolvedTheme === "dark" ? "light" : "dark";
     setTheme(nextTheme);
   }, [resolvedTheme, setTheme]);
 
-  return React.createElement(
-    "button",
-    {
-      onClick: toggleTheme,
-      type: "button",
-      "aria-label": "Toggle theme",
-      className:
-        "p-2 rounded-full bg-transparent hover:bg-transparent focus:outline-none focus:ring-0 border-0 shadow-none"
-    },
-    resolvedTheme === "dark"
-      ? React.createElement(
-          "svg",
-          {
-            xmlns: "http://www.w3.org/2000/svg",
-            width: "20",
-            height: "20",
-            viewBox: "0 0 24 24",
-            fill: "none",
-            stroke: "currentColor",
-            strokeWidth: "2",
-            strokeLinecap: "round",
-            strokeLinejoin: "round"
-          },
-          React.createElement("circle", {
-            cx: "12",
-            cy: "12",
-            r: "5"
-          }),
-          React.createElement("line", {
-            x1: "12",
-            y1: "1",
-            x2: "12",
-            y2: "3"
-          }),
-          React.createElement("line", {
-            x1: "12",
-            y1: "21",
-            x2: "12",
-            y2: "23"
-          })
-        )
-      : React.createElement(
-          "svg",
-          {
-            xmlns: "http://www.w3.org/2000/svg",
-            width: "20",
-            height: "20",
-            viewBox: "0 0 24 24",
-            fill: "none",
-            stroke: "currentColor",
-            strokeWidth: "2",
-            strokeLinecap: "round",
-            strokeLinejoin: "round"
-          },
-          React.createElement("path", {
-            d: "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"
-          })
-        )
+  return (
+    <button
+      onClick={toggleTheme}
+      type="button"
+      aria-label="Toggle theme"
+      className="p-2 rounded-full bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-0 focus:ring-offset-0"
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    >
+      {resolvedTheme === "dark" ? (
+        // Sun icon for dark mode (switch to light)
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-white"
+          style={{ display: 'block' }}
+        >
+          <circle cx="12" cy="12" r="5" />
+          <line x1="12" y1="1" x2="12" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="23" />
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+          <line x1="1" y1="12" x2="3" y2="12" />
+          <line x1="21" y1="12" x2="23" y2="12" />
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+        </svg>
+      ) : (
+        // Moon icon for light mode (switch to dark)
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-gray-700 dark:text-gray-300"
+          style={{ display: 'block' }}
+        >
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      )}
+    </button>
   );
-}
+};
+
+export default ThemeToggle;
 /*// frontend/src/components/themeToggle.tsx
 import * as React from "react";
 import { useTheme } from "./theme-provider";

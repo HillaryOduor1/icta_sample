@@ -73,13 +73,13 @@ const HeroSection = () => {
             >
               {hero.primaryButtonText || 'Download Masterplan'}
             </a>
-            <a
+            {/*<a
               href="#"
               onClick={triggerHaptic}
               className="border-2 border-primary text-primary dark:text-white dark:border-white/30 px-8 py-4 rounded-lg font-bold text-base hover:bg-primary/10 dark:hover:bg-white/10 hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 dark:focus:ring-offset-black"
             >
               {hero.secondaryButtonText || 'View Roadmap'}
-            </a>
+            </a>*/}
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-2 flex z-20">
