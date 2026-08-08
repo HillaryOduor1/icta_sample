@@ -20,21 +20,4 @@ export class ActivityService {
     return this.repository.clearAll(tenantId);
   }
 }
-/*import { ActivityRepository } from '../repositories/activity.repository.js';
-import { AppError } from '../../../shared/errors/AppError.js';
 
-const activityRepo = new ActivityRepository();
-
-export class ActivityService {
-  async getLogs(tenantId, filter, pagination) {
-    return activityRepo.findAllWithPagination(tenantId, { ...pagination, filter });
-  }
-
-  async getStats(tenantId) {
-    return activityRepo.getStats(tenantId);
-  }
-
-  async clearLogs(tenantId) {
-    return activityRepo.clearAll(tenantId);
-  }
-}*/

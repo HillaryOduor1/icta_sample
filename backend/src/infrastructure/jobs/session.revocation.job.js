@@ -2,10 +2,7 @@ import { redisClient } from '../../config/redis.js';
 import { RefreshTokenModel } from '../../database/models/refreshToken.model.js';
 import { logger } from '../../config/logger.js';
 
-/**
- * Background job: clean up expired or revoked refresh tokens from Redis and database.
- * Run every hour.
- */
+/*Background job: clean up expired or revoked refresh tokens from Redis and database.Run every hour.*/
 export const sessionRevocationJob = async () => {
   try {
     // 1. Remove expired refresh tokens from Redis (TTL handles auto-deletion, but we can manually clean)

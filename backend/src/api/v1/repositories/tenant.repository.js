@@ -49,23 +49,3 @@ export class TenantRepository {
     return result.deletedCount > 0;
   }
 }
-/*import { TenantModel } from '../../../database/models/tenant.model.js';
-
-export class TenantRepository {
-  async findByDomain(domain) {
-    return TenantModel.findOne({ domain }).lean();
-  }
-
-  async findByDbName(dbName) {
-    return TenantModel.findOne({ dbName }).lean();
-  }
-
-  async findAll() {
-    return TenantModel.find({}, 'name dbName domain').lean();
-  }
-
-  async createTenant(data) {
-    const tenant = new TenantModel(data);
-    return tenant.save();
-  }
-}*/

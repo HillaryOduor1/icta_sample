@@ -48,25 +48,3 @@ export class ContactRepository extends BaseRepository {
     return result.deletedCount > 0;
   }
 }
-/*import { ContactMessageModel } from '../../../database/models/contactMessage.model.js';
-import { BaseRepository } from './base.repository.js';
-
-export class ContactRepository extends BaseRepository {
-  constructor() {
-    super(ContactMessageModel);
-  }
-
-  async findByTenantWithPagination(tenantId, { page, limit, sort = '-createdAt', filter = {} }) {
-    const skip = (page - 1) * limit;
-    const query = { tenantId, ...filter };
-    const [messages, total] = await Promise.all([
-      this.model.find(query).sort(sort).skip(skip).limit(limit).lean(),
-      this.model.countDocuments(query),
-    ]);
-    return { messages, total };
-  }
-
-  async markAsRead(id, tenantId) {
-    return this.update(id, tenantId, { status: 'read' });
-  }
-}*/

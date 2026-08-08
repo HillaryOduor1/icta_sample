@@ -1,12 +1,7 @@
 import { ActivityLogModel } from '../../database/models/activityLog.model.js';
 import { logger } from '../../config/logger.js';
 
-/**
- * Background job: delete old audit logs based on retention policy.
- * - Debug logs: 7 days
- * - Errors: 90 days
- * - Audit logs: 1 year
- */
+/*Background job: delete old audit logs based on retention policy.Debug logs: 7 days,Errors: 90 days,Audit logs: 1 year*/
 export const auditLogCleanupJob = async () => {
   try {
     const now = new Date();

@@ -1,4 +1,4 @@
-// backend/src/middleware/payloadMonitor.js
+
 export const payloadMonitor = (req, res, next) => {
   const originalJson = req.json;
   let size = 0;

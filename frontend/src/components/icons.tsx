@@ -1,4 +1,4 @@
-// src/components/icons.tsx
+
 import * as React from "react";
 
 type IconProps = {

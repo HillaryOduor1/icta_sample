@@ -1,4 +1,3 @@
-// frontend/src/content/ContentContext.tsx
 import * as React from "react";
 import { defaultContent } from "./defaultContent";
 import type { SiteContent } from "./contentTypes";

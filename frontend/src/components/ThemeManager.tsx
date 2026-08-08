@@ -1,5 +1,6 @@
-import React from 'react';
-import { useContent } from '../content/useContext';
+
+import React from "react";
+import { useContent } from "../content/useContext";
 
 interface ThemeConfig {
   light?: Record<string, string>;
@@ -18,49 +19,60 @@ interface ThemeConfig {
   };
 }
 
-export default function ThemeManager({ children }: { children: React.ReactNode }) {
+const STYLE_EL_ID = "dynamic-dark-theme";
+
+export default function ThemeManager({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { content } = useContent();
   const theme = (content?.theme as ThemeConfig) || {};
 
   React.useEffect(() => {
     const root = document.documentElement;
-    
-    // Light mode variables
+
+    // Light mode CSS variables (applied globally)
     if (theme.light) {
       Object.entries(theme.light).forEach(([key, value]) => {
         if (value) root.style.setProperty(`--${key}`, value);
       });
     }
-    
-    // Dark mode overrides – store as a style element
+
+    // Dark mode overrides via a <style> element so they
+    // activate automatically when the .dark class is present
     if (theme.dark) {
-      let styleEl = document.getElementById('dynamic-dark-theme');
+      let styleEl = document.getElementById(STYLE_EL_ID) as HTMLStyleElement | null;
       if (!styleEl) {
-        styleEl = document.createElement('style');
-        styleEl.id = 'dynamic-dark-theme';
+        styleEl = document.createElement("style");
+        styleEl.id = STYLE_EL_ID;
         document.head.appendChild(styleEl);
       }
       const darkStyles = Object.entries(theme.dark)
-        .filter(([_, value]) => value)
+        .filter(([, value]) => value)
         .map(([key, value]) => `--${key}: ${value};`)
-        .join(' ');
+        .join(" ");
       styleEl.textContent = `.dark { ${darkStyles} }`;
     }
-    
-    // Typography
-    if (theme.typography) {
-      if (theme.typography.fontFamily) root.style.setProperty('--font-family', theme.typography.fontFamily);
-      if (theme.typography.headingWeight) root.style.setProperty('--weight-heading', theme.typography.headingWeight);
-      if (theme.typography.bodyWeight) root.style.setProperty('--weight-body', theme.typography.bodyWeight);
-      if (theme.typography.textScale !== undefined) root.style.setProperty('--text-scale', theme.typography.textScale.toString());
-      if (theme.typography.textAlign) root.style.setProperty('--text-align', theme.typography.textAlign);
+
+    // Typography tokens
+    const typo = theme.typography;
+    if (typo) {
+      if (typo.fontFamily) root.style.setProperty("--font-family", typo.fontFamily);
+      if (typo.headingWeight) root.style.setProperty("--weight-heading", typo.headingWeight);
+      if (typo.bodyWeight) root.style.setProperty("--weight-body", typo.bodyWeight);
+      if (typo.textScale !== undefined)
+        root.style.setProperty("--text-scale", String(typo.textScale));
+      if (typo.textAlign) root.style.setProperty("--text-align", typo.textAlign);
     }
-    
-    // Spacing
-    if (theme.spacing) {
-      if (theme.spacing.spacingUnit) root.style.setProperty('--spacing-unit', theme.spacing.spacingUnit);
-      if (theme.spacing.radius) root.style.setProperty('--radius', theme.spacing.radius);
-      if (theme.spacing.shadowIntensity) root.style.setProperty('--shadow-intensity', theme.spacing.shadowIntensity);
+
+    // Spacing tokens
+    const spacing = theme.spacing;
+    if (spacing) {
+      if (spacing.spacingUnit) root.style.setProperty("--spacing-unit", spacing.spacingUnit);
+      if (spacing.radius) root.style.setProperty("--radius", spacing.radius);
+      if (spacing.shadowIntensity)
+        root.style.setProperty("--shadow-intensity", spacing.shadowIntensity);
     }
   }, [theme]);
 

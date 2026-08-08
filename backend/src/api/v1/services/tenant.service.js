@@ -9,9 +9,8 @@ import { ContentModel } from '../../../database/models/content.model.js';
 const tenantRepo = new TenantRepository();
 
 export class TenantService {
-  /**
-   * Resolve tenant by domain or dbName.
-   */
+  // Resolve tenant by domain or dbName.
+   
   async resolveTenant(identifier, type = 'domain') {
     let tenant;
     if (type === 'domain') {
@@ -23,9 +22,8 @@ export class TenantService {
     return tenant;
   }
 
-  /**
-   * Create a new tenant with its own database and default admin user.
-   */
+  //Create a new tenant with its own database and default admin user.
+  
   async createTenant(data) {
     const { name, domain, adminEmail, adminPassword } = data;
     const siteId = uuidv4();
@@ -64,34 +62,30 @@ export class TenantService {
     return tenant;
   }
 
-  /**
-   * List all tenants (for superadmin).
-   */
+  // List all tenants (for superadmin).
+
   async listTenants() {
     return tenantRepo.findAll();
   }
 
-  /**
-   * Get tenant by ID.
-   */
+  // Get tenant by ID.
+   
   async getTenantById(id) {
     const tenant = await tenantRepo.findById(id);
     if (!tenant) throw new AppError('Tenant not found', 404);
     return tenant;
   }
 
-  /**
-   * Update tenant details.
-   */
+  // Update tenant details.
+  
   async updateTenant(id, updates) {
     const tenant = await tenantRepo.update(id, null, updates); // no tenantId filter for master
     if (!tenant) throw new AppError('Tenant not found', 404);
     return tenant;
   }
 
-  /**
-   * Delete tenant and its database (dangerous – use with care).
-   */
+  // Delete tenant and its database (dangerous – use with care).
+  
   async deleteTenant(id) {
     const tenant = await tenantRepo.findById(id);
     if (!tenant) throw new AppError('Tenant not found', 404);

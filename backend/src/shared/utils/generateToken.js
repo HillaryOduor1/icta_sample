@@ -29,11 +29,3 @@ export const generateRefreshTokenString = () => {
 // Re-export generateId for convenience
 import { generateId, generateRandomString } from './generateId.util.js';
 
-/*last stable
-const jwt = require('jsonwebtoken');
-
-module.exports = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '7d',
-  });
-};*/

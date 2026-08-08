@@ -26,25 +26,6 @@ export class ContentService {
   }
 
   
- /*async updateContent(page, tenantId, data, userId, username) {
-  const dto = new CreateContentDTO({ ...data, page });
-  dto.validate();
-
-  const updated = await this.contentRepo.upsertByPage(page, tenantId, data, username || 'system');
-  
-  // Log the activity with correct parameter order
-  await this.activityRepo.log(
-    tenantId,           // tenantId
-    'content_update',   // action
-    `Updated content for page: ${page}`, // label
-    userId || 'system', // userId
-    username || 'system', // username
-    JSON.stringify({ page, fields: Object.keys(data) }), // detail
-    { page, timestamp: new Date() } // metadata
-  ).catch(err => console.error('Failed to log activity:', err)); // Don't let logging fail the operation
-  
-  return updated;
-}*/
 async updateContent(page, tenantId, data, userId, username) {
   const dto = new CreateContentDTO({ ...data, page });
   dto.validate();

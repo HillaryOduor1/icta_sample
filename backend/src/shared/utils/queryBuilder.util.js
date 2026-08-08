@@ -1,7 +1,5 @@
-/**
- * Build MongoDB filter object from query parameters
- * Supports: filter[field]=value, search, range[field][gte]=x, etc.
- */
+// Build MongoDB filter object from query parameters, Supports: filter[field]=value, search, range[field][gte]=x, etc.
+ 
 export const buildFilter = (query, allowedFields = []) => {
   const filter = {};
 
@@ -37,11 +35,7 @@ export const buildFilter = (query, allowedFields = []) => {
   return filter;
 };
 
-/**
- * Build sort object from query parameter `sort`
- * Example: sort=-createdAt,username
- * Returns { createdAt: -1, username: 1 }
- */
+/* Build sort object from query parameter `sort`, Example: sort=-createdAt,username,Returns { createdAt: -1, username: 1 }*/
 export const buildSort = (sortParam) => {
   if (!sortParam) return { createdAt: -1 };
   const sort = {};
@@ -54,9 +48,8 @@ export const buildSort = (sortParam) => {
   return sort;
 };
 
-/**
- * Build pagination object (page, limit, skip)
- */
+// Build pagination object (page, limit, skip)
+
 export const buildPagination = (page = 1, limit = 20, maxLimit = 100) => {
   const parsedPage = Math.max(1, parseInt(page) || 1);
   const parsedLimit = Math.min(maxLimit, Math.max(1, parseInt(limit) || 20));
@@ -64,10 +57,8 @@ export const buildPagination = (page = 1, limit = 20, maxLimit = 100) => {
   return { page: parsedPage, limit: parsedLimit, skip };
 };
 
-/**
- * Build field selection (projection) from `fields` query param
- * Example: fields=name,email,role
- */
+// Build field selection (projection) from `fields` query param, Example: fields=name,email,role
+
 export const buildProjection = (fieldsParam) => {
   if (!fieldsParam) return {};
   const projection = {};

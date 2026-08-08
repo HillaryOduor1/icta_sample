@@ -1,7 +1,7 @@
 
 import * as React from "react";
 
-// ================= TYPES =================
+// TYPES
 export type ThemeMode = "light" | "dark" | "system";
 export type FontSize = "small" | "normal" | "large" | "xlarge";
 export type ButtonStyle = "rounded" | "pill" | "square" | "filled" | "outline" | "ghost" | "link";
@@ -80,7 +80,7 @@ export interface AppSettings {
   lastUpdated: string;
 }
 
-// ================= DEFAULTS =================
+// DEFAULTS 
 const DEFAULT_SETTINGS: AppSettings = {
   version: 1,
   theme: {
@@ -139,7 +139,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   lastUpdated: new Date().toISOString()
 };
 
-// ================= STORAGE MANAGER =================
+// STORAGE MANAGER 
 //const API_URL = 'http://localhost:5000/api/settings';
 //const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 const getApiUrl = () => {
@@ -354,7 +354,7 @@ class StorageManager {
   }
 }
 
-// ================= REACT CONTEXT =================
+//  REACT CONTEXT
 interface SettingsContextValue {
   settings: AppSettings;
   updateSettings: (updates: Partial<AppSettings>) => Promise<void>;
@@ -374,7 +374,7 @@ interface SettingsContextValue {
 
 const SettingsContext = React.createContext<SettingsContextValue | undefined>(undefined);
 
-// ================= PROVIDER COMPONENT =================
+// PROVIDER COMPONENT
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [settings, setSettings] = React.useState<AppSettings>(DEFAULT_SETTINGS);
   const [isSaving, setIsSaving] = React.useState(false);
@@ -594,7 +594,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   );
 };
 
-// ================= HOOK =================
+// HOOK
 export const useSettings = function () {
   const context = React.useContext(SettingsContext);
   if (!context) {
@@ -603,7 +603,7 @@ export const useSettings = function () {
   return context;
 };
 
-// ================= HELPER FUNCTIONS =================
+// HELPER FUNCTIONS
 function getFontFamily(typography: TypographyConfig): string {
   switch (typography.fontFamily) {
     case "system":

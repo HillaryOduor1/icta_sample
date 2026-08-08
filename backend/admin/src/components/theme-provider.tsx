@@ -36,7 +36,7 @@ var ThemeProvider = function (props: ThemeProviderProps) {
     theme = _a[0],
     setTheme = _a[1];
 
-  // ---------------- EFFECT: APPLY THEME ----------------
+  //  EFFECT: APPLY THEME 
   React.useEffect(function () {
     if (typeof window === "undefined") return;
 
@@ -81,13 +81,13 @@ var ThemeProvider = function (props: ThemeProviderProps) {
     }
   }, [theme]);
 
-  // ---------------- CONTEXT VALUE ----------------
+  // CONTEXT VALUE 
   var value: ThemeContextValue = { theme: theme, setTheme: setTheme };
 
   return React.createElement(ThemeContext.Provider, { value: value }, children);
 };
 
-// ---------------- HOOK ----------------
+//  HOOK 
 function useTheme() {
   var context = React.useContext(ThemeContext);
   if (!context) {

@@ -3,7 +3,7 @@ import { ValidationError } from '../../../../shared/errors/ValidationError.js';
 export class CreateContentDTO {
   constructor(body) {
     this.page = body.page;
-    this.data = { ...body }; // entire content object
+    this.data = { ...body }; 
     this.published = body.published !== undefined ? body.published : true;
   }
 

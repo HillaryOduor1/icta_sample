@@ -44,7 +44,7 @@ export const createApp = () => {
   // Security headers
   securityMiddleware(app);
 
-  // ========== COMPRESSION (Optimized for production) ==========
+  // COMPRESSION (Optimized for production) 
   // Apply compression before other middleware to compress responses
   app.use(compression({
     // Compression level: 1-9, 6 is optimal for text/JSON (good balance of speed vs compression)
@@ -79,7 +79,7 @@ export const createApp = () => {
     }
   }));
 
-  // ========== BODY PARSER WITH REASONABLE LIMITS ==========
+  // BODY PARSER WITH REASONABLE LIMITS 
   // 2MB limit is sufficient for JSON content (actual content compresses to <100KB)
   // This prevents DoS attacks while allowing legitimate large content
   app.use(express.json({ 
@@ -137,7 +137,7 @@ export const createApp = () => {
   // Idempotency (prevents duplicate requests)
   app.use(idempotencyMiddleware);
 
-  // ========== HEALTH AND MONITORING ENDPOINTS ==========
+  // HEALTH AND MONITORING ENDPOINTS
   app.get('/health', healthController.liveness);
   app.get('/ready', healthController.readiness);
   app.get('/live', healthController.startup);

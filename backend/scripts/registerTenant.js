@@ -27,7 +27,7 @@ async function registerTenant() {
       dbName: MASTER_DB_NAME
     });
     
-    console.log('✅ Connected to master database');
+    console.log('Connected to master database');
 
     // Define Tenant schema matching your existing structure
     const tenantSchema = new mongoose.Schema({
@@ -45,20 +45,20 @@ async function registerTenant() {
 
     // List existing tenants
     const existingTenants = await Tenant.find({});
-    console.log('\n📊 Existing tenants:');
+    console.log('\n Existing tenants:');
     existingTenants.forEach(t => {
-      console.log(`   - ${t.name}: dbName=${t.dbName}, domain=${t.domain || 'N/A'}, siteId=${t.siteId}`);
+      console.log(` - ${t.name}: dbName=${t.dbName}, domain=${t.domain || 'N/A'}, siteId=${t.siteId}`);
     });
 
     // Check if tenant with this dbName already exists
     let existingTenant = await Tenant.findOne({ dbName: TENANT_DB_NAME });
 
     if (existingTenant) {
-      console.log(`\n⚠️ Tenant with dbName '${TENANT_DB_NAME}' already exists.`);
-      console.log('✅ Tenant already registered - no action needed');
-      console.log(`   Name: ${existingTenant.name}`);
-      console.log(`   DB Name: ${existingTenant.dbName}`);
-      console.log(`   Site ID: ${existingTenant.siteId}`);
+      console.log(`\n Tenant with dbName '${TENANT_DB_NAME}' already exists.`);
+      console.log(' Tenant already registered - no action needed');
+      console.log(` Name: ${existingTenant.name}`);
+      console.log(` DB Name: ${existingTenant.dbName}`);
+      console.log(` Site ID: ${existingTenant.siteId}`);
     } else {
       // Check if domain is available, if not use a unique one
       let domain = 'icta.localhost';
@@ -66,7 +66,7 @@ async function registerTenant() {
       
       if (domainExists) {
         domain = `icta-${Date.now()}.localhost`;
-        console.log(`\n⚠️ Domain 'icta.localhost' already in use, using: ${domain}`);
+        console.log(`\n Domain 'icta.localhost' already in use, using: ${domain}`);
       }
       
       // Generate unique siteId
@@ -82,27 +82,27 @@ async function registerTenant() {
         active: true
       });
       
-      console.log('\n✅ New tenant created successfully:');
-      console.log(`   ID: ${newTenant._id}`);
-      console.log(`   Name: ${newTenant.name}`);
-      console.log(`   DB Name: ${newTenant.dbName}`);
-      console.log(`   Site ID: ${newTenant.siteId}`);
-      console.log(`   Domain: ${newTenant.domain}`);
+      console.log('\n New tenant created successfully:');
+      console.log(`  ID: ${newTenant._id}`);
+      console.log(`  Name: ${newTenant.name}`);
+      console.log(`  DB Name: ${newTenant.dbName}`);
+      console.log(`  Site ID: ${newTenant.siteId}`);
+      console.log(`  Domain: ${newTenant.domain}`);
     }
 
     // List all tenants after operation
     const allTenants = await Tenant.find({});
-    console.log('\n📊 All tenants in master database:');
+    console.log('\n All tenants in master database:');
     allTenants.forEach(t => {
-      console.log(`   - ${t.name}: dbName=${t.dbName}, domain=${t.domain || 'N/A'}, active=${t.active}`);
+      console.log(` - ${t.name}: dbName=${t.dbName}, domain=${t.domain || 'N/A'}, active=${t.active}`);
     });
 
-    console.log('\n🎉 Tenant registration completed!');
+    console.log('\n Tenant registration completed!');
     
   } catch (error) {
-    console.error('❌ Registration failed:', error);
+    console.error(' Registration failed:', error);
     if (error.code === 11000) {
-      console.error('\n💡 Hint: Duplicate key error. A tenant with this dbName, siteId, or domain already exists.');
+      console.error('\n Hint: Duplicate key error. A tenant with this dbName, siteId, or domain already exists.');
       console.error('   Use a different dbName, siteId, or domain.');
     }
   } finally {

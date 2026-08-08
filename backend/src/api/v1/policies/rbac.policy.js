@@ -30,10 +30,7 @@ export const authorize = (...allowedRoles) => {
   };
 };
 
-/**
- * Check if user can access a specific tenant.
- * Superadmin can access any tenant; normal users only their own.
- */
+/*Check if user can access a specific tenant.Superadmin can access any tenant; normal users only their own.*/
 export const authorizeTenantAccess = (req, res, next) => {
   if (!req.user) {
     throw new AuthorizationError('Authentication required');
@@ -78,18 +75,14 @@ export const authorizeResourceOwner = (getResourceOwnerId) => {
   };
 };
 
-/**
- * Simple permission check function (not middleware) for service layer.
- */
+/* Simple permission check function (not middleware) for service layer.*/
 export const hasRole = (user, allowedRoles) => {
   if (!user) return false;
   const userRole = user.role;
   return allowedRoles.some(role => roleHierarchy[userRole]?.includes(role));
 };
 
-/**
- * Ensure user belongs to tenant (service layer).
- */
+/* Ensure user belongs to tenant (service layer)*/
 export const belongsToTenant = (user, tenantId) => {
   if (user.role === 'superadmin') return true;
   return user.tenantId === tenantId;
