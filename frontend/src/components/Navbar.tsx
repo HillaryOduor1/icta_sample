@@ -35,7 +35,7 @@ const Navbar: React.FC<NavbarProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
   const [openNestedDropdown, setOpenNestedDropdown] = useState<string | null>(null);
   const [visibleItems, setVisibleItems] = useState<NavItem[]>([]);
   const [moreItems, setMoreItems] = useState<NavItem[]>([]);
-  const [logoLoaded, setLogoLoaded] = useState<boolean>(true);
+  const [logoError, setLogoError] = useState<boolean>(false);
   const navRef = useRef<HTMLDivElement>(null);
   const rightSectionRef = useRef<HTMLDivElement>(null);
 
@@ -47,36 +47,39 @@ const Navbar: React.FC<NavbarProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
     if (currentTheme === 'dark') {
       return '/assets/ictaLogo_dark.png';
     } else {
-      return 'https://icta.go.ke//assets/images/ictalogo.png';
+      return '/assets/logo1.png';
     }
   }, [resolvedTheme, theme]);
 
   const logoSrc = getLogoSrc();
+  const currentTheme = resolvedTheme || theme;
 
-  // Preload the appropriate logo and preconnect to its origin
+  // Get logo dimensions based on theme
+  const getLogoDimensions = useCallback(() => {
+    if (currentTheme === 'dark') {
+      return {
+        height: '65px',  // Larger in dark mode
+        maxWidth: '200px'
+      };
+    } else {
+      return {
+        height: '45px',  // Normal in light mode
+        maxWidth: '140px'
+      };
+    }
+  }, [currentTheme]);
+
+  const logoDimensions = getLogoDimensions();
+
+  // Reset logo error state when theme changes to attempt reload
+  useEffect(() => {
+    setLogoError(false);
+  }, [resolvedTheme, theme]);
+
+  // Preload the appropriate logo
   useEffect(() => {
     if (!logoSrc) return;
 
-    // Preconnect to the logo's domain if it's external
-    try {
-      const url = new URL(logoSrc, window.location.origin);
-      const domain = url.origin;
-      if (domain && domain !== window.location.origin) {
-        const preconnectLink = document.createElement('link');
-        preconnectLink.rel = 'preconnect';
-        preconnectLink.href = domain;
-        document.head.appendChild(preconnectLink);
-        return () => {
-          if (preconnectLink.parentNode) {
-            document.head.removeChild(preconnectLink);
-          }
-        };
-      }
-    } catch (_) {
-      // ignore invalid URL
-    }
-
-    // Preload the logo image
     const preloadLink = document.createElement('link');
     preloadLink.rel = 'preload';
     preloadLink.as = 'image';
@@ -349,15 +352,16 @@ const Navbar: React.FC<NavbarProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
         </div>
       )}
       <div className="max-w-7xl mx-auto px-4 py-3">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          {/* HAMBURGER MENU - Mobile only, far left */}
-          <div className="flex lg:hidden items-center order-1">
+        <div className="flex items-center justify-between gap-4">
+          {/* LEFT SECTION - Hamburger (mobile) + Logo */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Hamburger Menu - Mobile only */}
             <button
               onClick={() => { 
                 triggerHaptic(); 
                 setIsSidebarOpen(!isSidebarOpen); 
               }}
-              className="p-2 rounded-lg bg-transparent hover:bg-transparent focus:outline-none focus:ring-0 border-0 shadow-none"
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
               aria-label={isSidebarOpen ? 'Close menu' : 'Open menu'}
             >
               {isSidebarOpen ? (
@@ -393,59 +397,43 @@ const Navbar: React.FC<NavbarProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
                 </svg>
               )}
             </button>
-          </div>
-          
-          {/* SPACER - Only visible on mobile, pushes logo to the right */}
-          <div className="flex-1 lg:hidden order-2" />
-          
-          {/* LOGO - Mobile: far right (order-3), Desktop: far left (lg:order-1) */}
-          <div 
-            className="flex-shrink-0 order-3 lg:order-1"
-            style={{ width: '20%', minWidth: '100px' }}
-          >
+
+            {/* Logo */}
             <a
               href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center justify-end lg:justify-start focus:outline-none focus:ring-2 focus:ring-red-500 rounded"
+              className="flex items-center focus:outline-none focus:ring-2 focus:ring-red-500 rounded transition-all duration-300"
             >
-              {logoLoaded ? (
+              {!logoError ? (
                 <img
                   src={logoSrc}
-                  key={resolvedTheme || theme}
+                  key={logoSrc}
                   alt="ICTA logo"
-                  className="logo-img"
+                  className="logo-img transition-all duration-300"
                   style={{
-                    objectFit: 'cover',
-                    width: '100%',
-                    height: 'auto',
-                    maxHeight: '45px',
-                    maxWidth: '140px'
+                    objectFit: 'contain',
+                    height: logoDimensions.height,
+                    width: 'auto',
+                    maxWidth: logoDimensions.maxWidth
                   }}
-                  onLoad={() => setLogoLoaded(true)}
-                  onError={() => setLogoLoaded(false)}
+                  onError={() => setLogoError(true)}
                 />
               ) : (
                 <div
                   style={{
+                    height: logoDimensions.height,
                     width: '120px',
-                    height: '45px',
-                    backgroundColor: '#e0e0e0',
-                    borderRadius: '4px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center'
                   }}
-                >
-                  <span className="text-xs text-gray-500">ICTA</span>
-                </div>
+                />
               )}
             </a>
           </div>
-          
-          {/* DESKTOP NAVIGATION - Middle (hidden on mobile) */}
+
+          {/* CENTER SECTION - Desktop Navigation */}
           <div 
-            className="hidden lg:flex items-center justify-center flex-1 lg:order-2"
+            className="hidden lg:flex items-center justify-center flex-1"
             ref={navRef}
           >
             <div className="flex items-center gap-4 xl:gap-5">
@@ -569,21 +557,34 @@ const Navbar: React.FC<NavbarProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
               )}
             </div>
           </div>
-          
-          {/* RIGHT CONTROLS - Theme Toggle only on mobile, Theme Toggle + Search on desktop */}
+
+          {/* RIGHT SECTION - Theme Toggle + Search */}
           <div 
             ref={rightSectionRef}
-            className="flex items-center gap-2 flex-shrink-0 order-4 lg:order-3"
+            className="flex items-center gap-2 flex-shrink-0"
           >
             <ThemeToggle />
-            {/* Search button - hidden on mobile, visible on desktop /}
+            {/* Search button - hidden on mobile, visible on desktop */}
             <button
-              className="hidden lg:flex p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 bg-transparent"
+              className="hidden lg:flex p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
               onClick={triggerHaptic}
               aria-label="Search"
             >
-              <span className="material-symbols-outlined text-xl">search</span>
-            </button>*/}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -592,4 +593,3 @@ const Navbar: React.FC<NavbarProps> = ({ isSidebarOpen, setIsSidebarOpen }) => {
 };
 
 export default Navbar;
-

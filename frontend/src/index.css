@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ICT AUTHORITY THEME TOKENS - PREMIUM DARK THEME,Based on enterprise/government design principles */
+/* ICT AUTHORITY THEME TOKENS  */
 
 :root {
   /* Brand - ICT Authority Red Theme (Single accent color) */
@@ -49,7 +49,7 @@
   --text-scale: 1.0;
 }
 
-//DARK THEME
+/* DARK THEME */
 
 .dark {
   /* Page Background - Deep, rich base */
@@ -89,7 +89,7 @@
   --info: #3B82F6 !important;
 }
 
-// AMBIENT BACKGROUND ,Subtle depth
+/* AMBIENT BACKGROUND - Subtle depth */
 
 .dark body,
 .dark html,
@@ -108,25 +108,30 @@
   min-height: 100vh;
 }
 
-//LIGHT MODE FORCE OVERRIDES - Keep consistent
+/* LIGHT MODE - Clean, high-contrast overrides*/
 
 .light body,
 .light html,
-.light section,
-.light #root,
-.light .bg-background-light,
-body.light,
-html.light {
-  background-color: #f8f5f5 !important;
+.light #root {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+.light section {
+  background-color: transparent;
 }
 
 .light .navbar-backdrop,
-.light header,
-.light section,
-.light footer {
-  background-color: rgba(248, 245, 245, 0.95) !important;
+.light header {
+  background-color: rgba(248, 245, 245, 0.96) !important;
+  color: var(--text) !important;
 }
 
+.light footer {
+  background-color: #000000 !important;
+}
+
+/* Surfaces / cards */
 .light .surface,
 .light .card,
 .light .bg-white {
@@ -134,16 +139,26 @@ html.light {
   border-color: #e0dcdc !important;
 }
 
-.light body,
-.light .text-text,
-.light p,
-.light span:not(.material-symbols-outlined) {
-  color: #1a1a1a !important;
+/* Main text hierarchy */
+.light h1,
+.light h2,
+.light h3,
+.light h4,
+.light h5,
+.light h6 {
+  color: #111111 !important;
 }
 
-.light .text-secondary,
-.light .text-muted {
+.light p {
+  color: #3f3f46 !important;
+}
+
+.light .text-secondary {
   color: #4a4a4a !important;
+}
+
+.light .text-muted {
+  color: #5f6368 !important;
 }
 
 .light .text-muted-light {
@@ -151,10 +166,10 @@ html.light {
 }
 
 .light .border-border {
-  border-color: #e0dcdc !important;
+  border-color: #d8d4d4 !important;
 }
 
-//DARK MODE FORCE OVERRIDES
+/* DARK MODE FORCE OVERRIDES */
 
 .dark body,
 .dark html,
@@ -290,7 +305,125 @@ html.dark {
   outline: none !important;
 }
 
-/* Dark mode button styles - Premium */
+/*ABOUT SECTION - Accessible text hierarchy in both themes*/
+
+.about-section {
+  color: var(--text);
+}
+
+/* Light mode */
+.light .about-section {
+  color: #1a1a1a !important;
+}
+
+.light .about-section h1,
+.light .about-section h2,
+.light .about-section h3,
+.light .about-section h4 {
+  color: #111111 !important;
+}
+
+.light .about-section p {
+  color: #3f3f46 !important;
+}
+
+.light .about-section .text-gray-500,
+.light .about-section .text-gray-600 {
+  color: #4a4a4a !important;
+}
+
+.light .about-section .text-gray-700 {
+  color: #27272a !important;
+}
+
+/* Dark mode */
+.dark .about-section {
+  color: #F8FAFC !important;
+}
+
+.dark .about-section h1,
+.dark .about-section h2,
+.dark .about-section h3,
+.dark .about-section h4 {
+  color: #F8FAFC !important;
+}
+
+.dark .about-section p {
+  color: #CBD5E1 !important;
+}
+
+.dark .about-section .text-gray-500 {
+  color: #94A3B8 !important;
+}
+
+.dark .about-section .text-gray-600,
+.dark .about-section .text-gray-700 {
+  color: #CBD5E1 !important;
+}
+
+/* ICON WRAPPERS */
+
+/* Light mode icons */
+.light .icon-wrapper {
+  background: rgba(242, 13, 13, 0.09) !important;
+  color: #d31616 !important;
+  border: 1px solid rgba(242, 13, 13, 0.16) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.light .icon-wrapper:hover {
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border-color: var(--primary) !important;
+  transform: scale(1.05);
+}
+
+/* Dark mode icons */
+.dark .icon-wrapper {
+  background: rgba(242, 13, 13, 0.12) !important;
+  color: var(--primary) !important;
+}
+
+.dark .icon-wrapper:hover {
+  background: var(--primary) !important;
+  color: #FFFFFF !important;
+  transform: scale(1.05) !important;
+}
+
+/* GLOBAL INTERACTION */
+
+.nav-link:hover,
+.sidebar-link:hover,
+.dropdown-item:hover {
+  color: var(--primary) !important;
+}
+
+.btn-secondary:hover {
+  background-color: rgba(242, 13, 13, 0.06) !important;
+  border-color: var(--primary) !important;
+  color: var(--primary) !important;
+}
+
+.dropdown-menu a:hover {
+  background-color: rgba(242, 13, 13, 0.08) !important;
+  color: var(--primary) !important;
+}
+
+/* Light mode secondary buttons */
+.light .btn-secondary {
+  background: #ffffff !important;
+  color: #27272a !important;
+  border: 1px solid #d4d0d0 !important;
+}
+
+.light .btn-secondary:hover {
+  background: rgba(242, 13, 13, 0.05) !important;
+  color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+/* DARK MODE BUTTON STYLES - Premium */
+
 .dark .btn-primary {
   background: linear-gradient(180deg, #E11D2E, #C41A28) !important;
   color: #FFFFFF !important;
@@ -330,163 +463,7 @@ html.dark {
   color: var(--primary) !important;
 }
 
-/* Dark mode icon backgrounds - Muted red */
-.dark .icon-wrapper {
-  background: rgba(242, 13, 13, 0.12) !important;
-  color: var(--primary) !important;
-}
-
-.dark .icon-wrapper:hover {
-  background: var(--primary) !important;
-  color: #FFFFFF !important;
-  transform: scale(1.05) !important;
-}
-
-/* Light mode icon backgrounds - Consistent */
-.light .icon-wrapper {
-  background: rgba(242, 13, 13, 0.1) !important;
-  color: var(--primary) !important;
-}
-
-.light .icon-wrapper:hover {
-  background: var(--primary) !important;
-  color: #FFFFFF !important;
-  transform: scale(1.05) !important;
-}
-
-/* Dark mode scrollbar - Premium */
-.dark ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-.dark ::-webkit-scrollbar-track {
-  background: #131922;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #2A3340;
-  border-radius: 5px;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
-}
-
-/* Light mode scrollbar */
-.light ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-.light ::-webkit-scrollbar-track {
-  background: #e0dcdc;
-}
-
-.light ::-webkit-scrollbar-thumb {
-  background: #b0acac;
-  border-radius: 5px;
-}
-
-.light ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
-}
-
-/* Dark mode selection color */
-.dark ::selection {
-  background-color: var(--primary) !important;
-  color: #FFFFFF !important;
-}
-
-/* Light mode selection color */
-.light ::selection {
-  background-color: var(--primary) !important;
-  color: #FFFFFF !important;
-}
-
-/* Dark mode dropdown menus */
-.dark .dropdown-menu,
-.dark select option {
-  background-color: #232B36 !important;
-  color: #F8FAFC !important;
-  border-color: rgba(255, 255, 255, 0.06) !important;
-}
-
-/* Dark mode modal backgrounds */
-.dark .modal-content,
-.dark dialog {
-  background: linear-gradient(180deg, #2A3340, #232B36) !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-/* Light mode modal backgrounds */
-.light .modal-content,
-.light dialog {
-  background-color: #FFFFFF !important;
-  border-color: #e0dcdc !important;
-}
-
-/* Dark mode table styles */
-.dark table,
-.dark th,
-.dark td {
-  border-color: rgba(255, 255, 255, 0.06) !important;
-}
-
-.dark th {
-  background-color: #131922 !important;
-  color: #F8FAFC !important;
-}
-
-.dark td {
-  color: #CBD5E1 !important;
-}
-
-/* Light mode table styles */
-.light table,
-.light th,
-.light td {
-  border-color: #e0dcdc !important;
-}
-
-.light th {
-  background-color: #f8f5f5 !important;
-  color: #1a1a1a !important;
-}
-
-/* Dark mode progress bars */
-.dark progress {
-  background-color: rgba(255, 255, 255, 0.06) !important;
-}
-
-.dark progress::-webkit-progress-bar {
-  background-color: rgba(255, 255, 255, 0.06) !important;
-}
-
-.dark progress::-webkit-progress-value {
-  background-color: var(--primary) !important;
-}
-
-/* Light mode progress bars */
-.light progress {
-  background-color: #e0dcdc !important;
-}
-
-.light progress::-webkit-progress-value {
-  background-color: var(--primary) !important;
-}
-
-/* Dark mode skeleton loaders */
-.dark .skeleton {
-  background: linear-gradient(90deg, #1B222C 25%, #232B36 50%, #1B222C 75%) !important;
-}
-
-/* Light mode skeleton loaders */
-.light .skeleton {
-  background: linear-gradient(90deg, #f0eeee 25%, #e0dcdc 50%, #f0eeee 75%) !important;
-}
-
-//BASE STYLES
+/* BASE STYLES */
 
 @layer base {
   * {
@@ -567,7 +544,8 @@ html.dark {
   }
 }
 
-//COMPONENT STYLES 
+/* COMPONENT STYLES */
+
 @layer components {
   /* Surface / Cards - With elevation */
   .surface {
@@ -744,18 +722,25 @@ html.dark {
 
   /* Cards - Premium */
   .card {
-    background: linear-gradient(180deg, var(--surface), var(--bg-secondary)) !important;
-    border: 1px solid var(--border);
+    background: #ffffff !important;
+    border: 1px solid #e2dfdf;
     border-radius: var(--radius);
     overflow: hidden;
-    transition: all 0.3s var(--ease-out-soft);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    transition:
+      transform 0.3s var(--ease-out-soft),
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
+    box-shadow:
+      0 2px 8px rgba(0, 0, 0, 0.05),
+      0 8px 24px rgba(0, 0, 0, 0.04);
   }
   
   .card:hover {
     transform: translateY(-2px);
-    border-color: var(--accent);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    border-color: rgba(242, 13, 13, 0.35);
+    box-shadow:
+      0 6px 16px rgba(0, 0, 0, 0.07),
+      0 12px 32px rgba(0, 0, 0, 0.06);
   }
   
   .card-title {
@@ -791,7 +776,21 @@ html.dark {
   }
 }
 
-/* Footer background */
+/* DARK MODE CARD OVERRIDES */
+
+.dark .card {
+  background: linear-gradient(180deg, #1B222C, #171E27) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .card:hover {
+  border-color: rgba(242, 13, 13, 0.3) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* FOOTER */
+
 footer {
   background-color: #000000;
 }
@@ -805,102 +804,141 @@ footer {
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* Background image handling */
-.bg-fixed {
-  background-attachment: fixed;
+/* SCROLLBARS */
+
+/* Dark mode scrollbar - Premium */
+.dark ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
 
-/* Ensure proper z-index stacking */
-.relative {
-  position: relative;
+.dark ::-webkit-scrollbar-track {
+  background: #131922;
 }
 
-.z-0 {
-  z-index: 0;
+.dark ::-webkit-scrollbar-thumb {
+  background: #2A3340;
+  border-radius: 5px;
 }
 
-.z-1 {
-  z-index: 1;
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
-.z-10 {
-  z-index: 10;
+/* Light mode scrollbar */
+.light ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
 
-/* Smooth transitions for backdrop blur */
-.backdrop-blur-sm {
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+.light ::-webkit-scrollbar-track {
+  background: #e0dcdc;
 }
 
-/* Ensure text is readable on dark backgrounds */
-.text-gray-200 {
-  color: #e5e5e5;
+.light ::-webkit-scrollbar-thumb {
+  background: #b0acac;
+  border-radius: 5px;
 }
 
-.text-gray-300 {
-  color: #d4d4d4;
+.light ::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
-// GLOBAL HOVER STATES ,SINGLE ACCENT COLOR (RED), Removed green hover - ICT Authority brand consistency
+/* SELECTION COLORS */
 
-
-/* Hover states - All use ICT Red */
-a:hover,
-button:hover,
-.nav-link:hover,
-.sidebar-link:hover,
-.dropdown-item:hover {
-  color: var(--primary) !important;
-}
-
-/* Button hover states - Single accent */
-.btn-primary {
-  background: linear-gradient(180deg, var(--primary), var(--primary-active)) !important;
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  background: linear-gradient(180deg, var(--primary-hover), var(--primary)) !important;
-  transform: translateY(-2px);
-}
-
-.btn-secondary:hover {
-  border-color: var(--primary) !important;
-  color: var(--primary) !important;
-}
-
-/* Icon wrapper hover */
-.icon-wrapper:hover {
+.dark ::selection {
   background-color: var(--primary) !important;
-  color: white !important;
+  color: #FFFFFF !important;
 }
 
-/* Card hover border */
-.card:hover,
-.surface-hover:hover {
-  border-color: var(--primary) !important;
-}
-
-/* Social icons hover - Using red */
-.social-icon:hover {
+.light ::selection {
   background-color: var(--primary) !important;
-  transform: scale(1.05);
+  color: #FFFFFF !important;
 }
 
-/* Form input focus */
-.form-input:focus {
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 0 3px rgba(242, 13, 13, 0.1) !important;
+/* DARK MODE DROPDOWN & MODAL */
+
+.dark .dropdown-menu,
+.dark select option {
+  background-color: #232B36 !important;
+  color: #F8FAFC !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
 }
 
-/* Dropdown menu item hover */
-.dropdown-menu a:hover {
-  background-color: rgba(242, 13, 13, 0.08) !important;
-  color: var(--primary) !important;
+.dark .modal-content,
+.dark dialog {
+  background: linear-gradient(180deg, #2A3340, #232B36) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }
 
-/* Logo styling to match original ICTA site */
+.light .modal-content,
+.light dialog {
+  background-color: #FFFFFF !important;
+  border-color: #e0dcdc !important;
+}
+
+/* TABLE STYLES*/
+
+.dark table,
+.dark th,
+.dark td {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark th {
+  background-color: #131922 !important;
+  color: #F8FAFC !important;
+}
+
+.dark td {
+  color: #CBD5E1 !important;
+}
+
+.light table,
+.light th,
+.light td {
+  border-color: #e0dcdc !important;
+}
+
+.light th {
+  background-color: #f8f5f5 !important;
+  color: #1a1a1a !important;
+}
+
+/* PROGRESS BARS*/
+
+.dark progress {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark progress::-webkit-progress-bar {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark progress::-webkit-progress-value {
+  background-color: var(--primary) !important;
+}
+
+.light progress {
+  background-color: #e0dcdc !important;
+}
+
+.light progress::-webkit-progress-value {
+  background-color: var(--primary) !important;
+}
+
+/* SKELETON LOADERS */
+
+.dark .skeleton {
+  background: linear-gradient(90deg, #1B222C 25%, #232B36 50%, #1B222C 75%) !important;
+}
+
+.light .skeleton {
+  background: linear-gradient(90deg, #f0eeee 25%, #e0dcdc 50%, #f0eeee 75%) !important;
+}
+
+/* LOGO STYLING */
+
 .logo-sect {
   display: flex;
   align-items: center;
@@ -914,7 +952,6 @@ button:hover,
   object-fit: contain;
 }
 
-/* For mobile devices */
 @media (max-width: 768px) {
   .logo-img {
     max-height: 45px;
@@ -922,7 +959,7 @@ button:hover,
   }
 }
 
-// UTILITIES
+/* UTILITIES */
 
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {
@@ -996,44 +1033,15 @@ button:hover,
   }
 }
 
-/* System preference detection indicator */
-@media (prefers-color-scheme: dark) {
-  .system-preference-indicator {
-    display: block;
-  }
-}
+/* iOS SAFARI FIXES */
 
-/* High contrast mode support */
-@media (prefers-contrast: high) {
-  :root, .dark {
-    --border: #000000;
-    --border-strong: #000000;
-    --accent: #f20d0d;
-    --text: #000000;
-    --text-secondary: #000000;
-  }
-  
-  .dark {
-    --text: #ffffff;
-    --text-secondary: #ffffff;
-    --border: #ffffff;
-  }
-  
-  .surface, .card {
-    border-width: 2px;
-  }
-}
-
-/* iOS Safari fixes */
 @supports (-webkit-touch-callout: none) {
-  /* Fix for iOS Safari sticky positioning */
   .sticky, 
   .fixed {
     position: -webkit-sticky;
     position: sticky;
   }
   
-  /* Improve touch targets on iOS */
   button, 
   a, 
   [role="button"] {
@@ -1041,17 +1049,14 @@ button:hover,
     touch-action: manipulation;
   }
   
-  /* Fix for iOS 100vh issue */
   .min-h-screen {
     min-height: -webkit-fill-available;
   }
   
-  /* Improve scrolling on iOS */
   .overflow-y-auto {
     -webkit-overflow-scrolling: touch;
   }
   
-  /* Prevent zoom on input focus on iOS */
   input, 
   select, 
   textarea {
@@ -1059,10 +1064,9 @@ button:hover,
   }
 }
 
-/* Fallback for older browsers */
+/* Safari specific fixes */
 @media not all and (min-resolution: 0.001dpcm) {
   @supports (-webkit-appearance: none) {
-    /* Safari specific fixes */
     .backdrop-blur-md {
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -1070,91 +1074,7 @@ button:hover,
   }
 }
 
-// CONSISTENT HOVER STATES - Single accent color
-
-button:hover,
-a:hover,
-.btn-primary:hover,
-.btn-secondary:hover {
-  background-color: rgba(242, 13, 13, 0.08) !important;
-}
-
-/* Remove default gray backgrounds */
-.hover\:bg-green-50:hover {
-  background-color: rgba(242, 13, 13, 0.08) !important;
-}
-
-.dark .hover\:bg-green-900\/20:hover {
-  background-color: rgba(242, 13, 13, 0.15) !important;
-}
-
-/* Focus rings for accessibility */
-*:focus-visible {
-  outline: 2px solid var(--primary) !important;
-  outline-offset: 2px !important;
-  border-radius: 4px !important;
-}
-
-/* Touch targets for mobile */
-button, 
-a, 
-[role="button"] {
-  min-height: 44px;
-  min-width: 44px;
-}
-
-/* Responsive text sizes */
-@media (max-width: 768px) {
-  h1 { font-size: 1.75rem !important; }
-  h2 { font-size: 1.5rem !important; }
-  h3 { font-size: 1.25rem !important; }
-  p { font-size: 0.875rem !important; }
-}
-
-/* Better loading experience */
-.skeleton-loader {
-  background: linear-gradient(90deg, #f0eeee 25%, #e0dcdc 50%, #f0eeee 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-}
-
-@keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* Dark mode skeleton loader */
-.dark .skeleton-loader {
-  background: linear-gradient(90deg, #1B222C 25%, #232B36 50%, #1B222C 75%);
-}
-
-/* Ensure buttons have transparent backgrounds on mobile */
-button.bg-transparent {
-  background-color: transparent !important;
-}
-
-/* Mobile navbar adjustments */
-@media (max-width: 1023px) {
-  .lg\:order-1 {
-    order: 2;
-  }
-  .order-1 {
-    order: 1;
-  }
-  .order-2 {
-    order: 2;
-  }
-  .order-3 {
-    order: 3;
-  }
-}
-
-/* Sidebar dark mode background fix */
-.dark .bg-surface-dark {
-  background-color: #1B222C !important;
-}
-
-//ES5 COMPATIBILITY FALLBACKS - Solid colors for older browsers, These styles work alongside Tailwind, not replace it
+/* ES5 COMPATIBILITY FALLBACKS */
 
 /* Footer ES5 Fallbacks */
 .footer-container {
@@ -1196,40 +1116,14 @@ button.bg-transparent {
   background-color: rgba(0, 0, 0, 0.6) !important;
 }
 
-/* About Section ES5 Fallbacks - Keep text black */
-.about-section {
-  color: #1a1a1a !important;
-}
-
-.about-section h1,
-.about-section h2,
-.about-section h3,
-.about-section p,
-.about-section span {
-  color: #1a1a1a !important;
-}
-
-.dark .about-section {
-  color: #1a1a1a !important;
-}
-
-.dark .about-section h1,
-.dark .about-section h2,
-.dark .about-section h3,
-.dark .about-section p,
-.dark .about-section span {
-  color: #1a1a1a !important;
-}
-
 /* Kenyan Flag Colors - ES5 compatible */
 .kenyan-flag-black { background-color: #000000; }
 .kenyan-flag-red { background-color: #cc0000; }
 .kenyan-flag-green { background-color: #008000; }
 .kenyan-flag-white { background-color: #ffffff; }
 
-/* ES5 FLEX GAP FALLBACKS - For older browsers,This ensures flex gap works in IE11 and older browsers*/
+/* ES5 FLEX GAP FALLBACKS */
 
-/* Fallback for browsers without flex gap support */
 @supports not (gap: 1rem) {
   .flex.gap-1 > *:not(:last-child) { margin-right: 0.25rem; }
   .flex.gap-2 > *:not(:last-child) { margin-right: 0.5rem; }
@@ -1246,7 +1140,6 @@ button.bg-transparent {
   .flex-col.gap-5 > *:not(:last-child) { margin-bottom: 1.25rem; margin-right: 0; }
   .flex-col.gap-6 > *:not(:last-child) { margin-bottom: 1.5rem; margin-right: 0; }
   
-  /* For wrapped flex containers */
   .flex-wrap.gap-1 > * { margin: 0.125rem; }
   .flex-wrap.gap-2 > * { margin: 0.25rem; }
   .flex-wrap.gap-3 > * { margin: 0.375rem; }
@@ -1264,9 +1157,8 @@ button.bg-transparent {
   .flex.gap-8 { gap: 2rem; }
 }
 
-/* PREMIUM ADDITIONS - Statistics Cards Enhancement*/
+/*PREMIUM STATISTICS CARDS ENHANCEMENT */
 
-/* Enhanced stat cards with proper structure */
 .stat-card-enhanced {
   background: linear-gradient(180deg, #1B222C, #171E27) !important;
   border: 1px solid rgba(255, 255, 255, 0.06) !important;
@@ -1310,3 +1202,105 @@ button.bg-transparent {
   margin: 0.75rem 0;
 }
 
+/*RESPONSIVE TEXT SIZES */
+
+@media (max-width: 768px) {
+  h1 { font-size: 1.75rem !important; }
+  h2 { font-size: 1.5rem !important; }
+  h3 { font-size: 1.25rem !important; }
+  p { font-size: 0.875rem !important; }
+}
+
+/*MOBILE NAVBAR ADJUSTMENTS */
+
+@media (max-width: 1023px) {
+  .lg\:order-1 {
+    order: 2;
+  }
+  .order-1 {
+    order: 1;
+  }
+  .order-2 {
+    order: 2;
+  }
+  .order-3 {
+    order: 3;
+  }
+}
+
+/* SIDEBAR DARK MODE FIX */
+
+.dark .bg-surface-dark {
+  background-color: #1B222C !important;
+}
+
+/* TOUCH TARGETS */
+
+button, 
+a, 
+[role="button"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+/* ABOUT SECTION — LEFT CONTENT Intentionally identical in light and dark themes */
+
+.about-left-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* Eyebrow */
+.about-left-content .about-eyebrow {
+  color: #f87171 !important;
+}
+
+/* Eyebrow divider */
+.about-left-content .about-eyebrow-line {
+  background-color: rgba(248, 113, 113, 0.35) !important;
+}
+
+/* Main heading */
+.about-left-content .about-left-title {
+  color: #ffffff !important;
+}
+
+/* Description */
+.about-left-content .about-left-description {
+  color: #e5e7eb !important;
+}
+
+/* IMPORTANT:Prevent light-mode global typography rules from overriding the About left column.*/
+
+.light .about-left-content h1,
+.light .about-left-content h2,
+.light .about-left-content h3,
+.light .about-left-content h4,
+.light .about-left-content p,
+.light .about-left-content span {
+  color: inherit;
+}
+
+.light .about-left-content .about-left-title {
+  color: #ffffff !important;
+}
+
+.light .about-left-content .about-left-description {
+  color: #e5e7eb !important;
+}
+
+.light .about-left-content .about-eyebrow {
+  color: #f87171 !important;
+}
+
+/* Dark mode uses exactly the same values */
+.dark .about-left-content .about-left-title {
+  color: #ffffff !important;
+}
+
+.dark .about-left-content .about-left-description {
+  color: #e5e7eb !important;
+}
+
+.dark .about-left-content .about-eyebrow {
+  color: #f87171 !important;
+}
